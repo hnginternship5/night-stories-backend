@@ -75,6 +75,23 @@ C:.
 ```
 
 ### SRC FOLDER
+## Basic Setup for the project
+
+1. CLone the project
+2. Run npm install to install all dependencies
+3. Create a file in the folder name .env (It will contain your environment variables)
+4. In the file set your port and database url. An example is given below
+    ```
+        DBURI=mongodb://localhost:27017/my-db
+        PORT=3000
+    ```
+5. Ensure MongoDB is installed and running on your machine, so you don't get errors
+6. Type in your terminal
+    ```bash
+    npm run dev
+    ```
+7. No welcome page yet but you should get some json data in your browser when you load "localhost/:"
+
 
 This contains most of the folders and  files for the project
 
