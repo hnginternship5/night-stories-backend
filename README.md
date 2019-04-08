@@ -26,8 +26,10 @@
 A starter Template to build Api's with Express Node and MongoDB.
 
 ```
-1 cp .env.example .env
-2 npm run dev
+1. cp .env.example .env
+2. npm i
+(Make sure you have mongodb installed)
+3. npm run dev
 ```
 ## Features
 
