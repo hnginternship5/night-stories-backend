@@ -9,10 +9,11 @@ const chalk = require('../config/chalk');
 const DBURI = config.db;
 
 const options = {
-  reconnectTries: Number.MAX_VALUE,
-  reconnectInterval: 500,
   poolSize: 10,
   bufferMaxEntries: 0,
+  useNewUrlParser: true,
+  reconnectInterval: 500,
+  reconnectTries: Number.MAX_VALUE,
 };
 
 mongoose.connect(DBURI, options);
