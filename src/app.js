@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 require('dotenv').config({ path: '.env' });
 const express = require('express');
 const bodyParser = require('body-parser');
