@@ -2,6 +2,10 @@
 
 A starter Template to build Api's with Express Node and MongoDB.
 
+```
+1 cp .env.example .env
+2 npm run dev
+```
 ## Features
 
 1. Restful Api
