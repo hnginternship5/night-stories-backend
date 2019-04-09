@@ -16,7 +16,7 @@ require('./models');
 if (config.env !== 'test') {
   app.use(morgan('dev'));
 }
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json({ limit: '52428800' }));
 const apiRoutes = require('./router');
 
