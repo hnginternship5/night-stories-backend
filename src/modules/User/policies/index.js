@@ -13,3 +13,14 @@ module.exports.register = {
 };
 
 
+module.exports.update = {
+  body: {
+    email: joi.string().email(),
+    name: joi.string(),
+    password: joi.string().alphanum().min(3).max(30),
+  },
+};
+
+
+
+
