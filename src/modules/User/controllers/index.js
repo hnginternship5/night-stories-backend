@@ -86,3 +86,9 @@ module.exports.login = async (req, res) => {
     return err;
   }
 };
+
+module.exports.view_profile = async (req, res) => {
+  const user = await User.findById({ _id: req.params.id });
+  sendJSONResponse(res, 200, { user }, req.method, 'View Profile');
+};
+
