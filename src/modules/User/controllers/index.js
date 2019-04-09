@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
 const { sendJSONResponse } = require('../../../helpers');
+const jwt = require('jsonwebtoken')
+const auth = require('../auth')
+
 
 const User = mongoose.model('User');
 
@@ -47,6 +50,30 @@ module.exports.update = async (req, res) => {
     sendJSONResponse(res, 200, { user }, req.method, 'User Updated Succesfully!');
   });
 };
+
+//Auth User Login
+module.exports.login = async (req, res) =>{
+  const {email, password} = req.body
+    
+  try{
+      //Authenticate User
+      const user = await auth.authenticate(email, password);
+
+      //create JWT
+      const token = jwt.sign(user.toJSON(), 'secret1', {
+          expiresIn: '15m'
+      } )
+
+
+      const {iat, exp} = jwt.decode(token)
+      res.send({iat, exp, token})
+  }
+  catch(err){
+      //user Unauthorized
+      return err
+  }
+}
+
 
 
 
