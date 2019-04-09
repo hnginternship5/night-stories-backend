@@ -1,7 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcryptjs')
 const mongoose = require('mongoose')
-const User = mongoose.model('./models/User/index')
+const User = mongoose.model('User')
 
 
 exports.authenticate = (email, password) =>{
