@@ -20,6 +20,7 @@ const storySchema = new mongoose.Schema({
   },
   story_views: Number,
   status: String,
+  like_count: Number,
 });
 
 const Story = mongoose.model('Story', storySchema);
