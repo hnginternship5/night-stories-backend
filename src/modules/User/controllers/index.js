@@ -14,9 +14,3 @@ module.exports.register = async (req, res) => {
   sendJSONResponse(res, 200, { token, user }, req.method, 'Created New User!');
 };
 
-module.exports.view_profile = async (req, res) => {
-  const user = await User.findById({ _id: req.params.id });
-  sendJSONResponse(res, 200, { user },req.method,'User Profile');
-};
-
-
