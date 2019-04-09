@@ -28,3 +28,25 @@ module.exports.register = async (req, res) => {
 };
 
 
+module.exports.update = async (req, res) => {
+  const { name, email, password } = req.body;
+  User.findById(req.params.userId, (err, user) => {
+    if (err) {
+      return sendJSONResponse(res, 404, null, req.method, 'User not Found!');
+    }
+    if (name) {
+      user.name = name;
+    }
+    if (email) {
+      user.email = email;
+    }
+    if (password) {
+      user.setPassword(password);
+    }
+    user.save();
+    sendJSONResponse(res, 200, { user }, req.method, 'User Updated Succesfully!');
+  });
+};
+
+
+
