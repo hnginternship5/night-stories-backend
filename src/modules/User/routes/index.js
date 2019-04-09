@@ -11,4 +11,3 @@ router.post('/register', expressValidator(validateUser.register), catchErrors(ct
 router.put('/edit/:userId', expressValidator(validateUser.update), catchErrors(ctrlUser.update));
 
 module.exports = router; 
-
