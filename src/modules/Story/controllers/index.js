@@ -13,5 +13,4 @@ module.exports.create = async (req, res) => {
   story.designation = decoded._id;
   await story.save();
   sendJSONResponse(res, 201, { }, req.method, 'Created New Story!');
-};
-
+}
