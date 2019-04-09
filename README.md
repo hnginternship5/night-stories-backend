@@ -4,9 +4,9 @@
 1. Clone the project
 2. Run 
     ```
-        npm
-    ```
-     install to install all dependencies
+        npm install
+    ``` 
+    to install all dependencies
 3. Create a file in the folder name .env (It will contain your environment variables)
 4. In the file set your port and database url. An example is given below
     ```
