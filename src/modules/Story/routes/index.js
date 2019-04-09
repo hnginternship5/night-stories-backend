@@ -6,7 +6,8 @@ const { catchErrors, verifyToken, checkTokenExists } = require('../../../helpers
 
 
 const router = express.Router();
-
+router.get('/', ctrlStory.viewStories);
+router.get('/stories:id', ctrlStory.viewSingleStory);
 router.post('/create', expressValidator(validateStory.create), checkTokenExists, verifyToken, catchErrors(ctrlStory.create));
 
 
