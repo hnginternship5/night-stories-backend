@@ -10,3 +10,4 @@ const router = express.Router();
 router.post('/register', expressValidator(validateUser.register), catchErrors(ctrlUser.register))
 
 module.exports = router; 
+

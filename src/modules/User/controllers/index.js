@@ -19,12 +19,12 @@ module.exports.register = async (req, res) => {
       if(!is_admin) user.is_admin = false;
       if(!is_premium) user.is_premium = false;
 
+
       user.save();
       const token = user.generateJWT();
       sendJSONResponse(res, 200, { token, user }, req.method, 'Created New User!');
     }
   })
 };
-
 
 
