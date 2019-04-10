@@ -36,7 +36,14 @@ module.exports.register = async (req, res) => {
       sendJSONResponse(
         res,
         200,
-        { token, user },
+        { 
+          token, 
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          admin: user.is_admin,
+          premium: user.is_premium
+        },
         req.method,
         "Created New User!"
       );
@@ -70,7 +77,13 @@ module.exports.update = async (req, res) => {
     sendJSONResponse(
       res,
       200,
-      { user },
+      { 
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        admin: user.is_admin,
+        premium: user.is_premium
+       },
       req.method,
       "User Updated Succesfully!"
     );
@@ -101,7 +114,14 @@ module.exports.login = async (req, res) => {
       sendJSONResponse(
         res,
         200,
-        { token, findUser },
+        { 
+          token, 
+          id: findUser._id,
+          name: findUser.name,
+          email: findUser.email,
+          admin: findUser.is_admin,
+          premium: findUser.is_premium 
+        },
         req.method,
         "Login Successful!"
       );
@@ -126,7 +146,19 @@ module.exports.login = async (req, res) => {
 module.exports.view_profile = async (req, res) => {
   const user = await User.findById({ _id: req.params.id });
   if(user){
-    sendJSONResponse(res, 200, { user }, req.method, 'View Profile');
+    sendJSONResponse(
+      res, 
+      200, 
+      { 
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        admin: user.is_admin,
+        premium: user.is_premium
+       }, 
+       req.method, 
+       'View Profile'
+       );
   }
   else{
     sendJSONResponse(res, 404, null, req.method, 'User Not Found');
