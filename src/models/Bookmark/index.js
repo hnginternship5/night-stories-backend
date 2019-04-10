@@ -1,11 +1,13 @@
+/* eslint-disable no-unused-vars */
 const Story = require('../Story/index.js');
 const User = require('../User/index.js');
 const mongoose = require('mongoose');
-Schema = mongoose.Schema;
+
+const { Schema } = mongoose;
 
 const bookmarkSchema = new mongoose.Schema({
-    user : { type: Schema.Types.ObjectId, ref: 'User', required : true },
-    story : { type: Schema.Types.ObjectId, ref: 'Story', required : true }
+  user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  story: { type: Schema.Types.ObjectId, ref: 'Story', required: true },
 });
 
 const Bookmark = mongoose.model('Bookmark', bookmarkSchema);

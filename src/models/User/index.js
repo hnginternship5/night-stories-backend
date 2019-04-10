@@ -14,6 +14,24 @@ const userSchema = new mongoose.Schema({
   is_premium: {
     type: Boolean,
   },
+  // @raji worked here
+  liked_story: [
+    {
+      story: {
+        type: Schema.Types.ObjectId,
+        ref: 'Story',
+      },
+    },
+  ],
+  bookmarks: [
+    {
+      story: {
+        type: Schema.Types.ObjectId,
+        ref: 'Story',
+      },
+    },
+  ],
+  // End of work
   password: {
     type: String,
     required: true
