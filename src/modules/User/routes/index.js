@@ -7,7 +7,8 @@ const { catchErrors } = require('../../../helpers');
 
 const router = express.Router();
 
-router.post('/register', expressValidator(validateUser.register), catchErrors(ctrlUser.register))
+router.post('/register', expressValidator(validateUser.register), catchErrors(ctrlUser.register));
+router.put('/edit/:userId', expressValidator(validateUser.update), catchErrors(ctrlUser.update));
+router.get('/profile/:id', catchErrors(ctrlUser.view_profile));
 
-
-module.exports = router;
+module.exports = router; 
