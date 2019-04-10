@@ -4,6 +4,14 @@ const { sendJSONResponse, generateToken } = require("../../../helpers");
 
 const User = mongoose.model("User");
 
+const cloudinary = require('cloudinary').v2;
+// cloudinary Config
+cloudinary.config({
+  cloud_name: process.env.CLODINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
 /**
    * Register user
    * @param {object} req - Request object
@@ -61,7 +69,7 @@ module.exports.update = async (req, res) => {
   const { name, email, password } = req.body;
   User.findById(req.params.userId, (err, user) => {
     if (err) {
-      return sendJSONResponse(res, 404, null, req.method, "User not Found!");
+      return sendJSONResponse(res, 409, null, req.method, "User not Found!");
     }
     if (name) {
       user.name = name;
@@ -71,6 +79,20 @@ module.exports.update = async (req, res) => {
     }
     if (password) {
       user.password = bcrypt.hashSync(password, 10);
+    }
+    if (req.file) {
+      try {
+        if (user.imageId === '') {
+          cloudinary.uploader.destroy(user.imageId);
+        }
+        const result = cloudinary.uploader.upload(req.file.path);
+        const imageId = result.public_id;
+        const image = result.secure_url;
+        user.imageId = imageId;
+        user.image = image;
+      } catch (errs) {
+        sendJSONResponse(res, 200, { user }, req.method, errs.message);
+      }
     }
 
     user.save();

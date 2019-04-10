@@ -14,6 +14,13 @@ const userSchema = new mongoose.Schema({
   is_premium: {
     type: Boolean,
   },
+  //@Brainz added image
+  image: {
+    type:String,
+  },
+  imageId: {
+    type: String,
+  },
   // @raji worked here
   liked_story: [
     {
