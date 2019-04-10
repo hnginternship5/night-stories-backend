@@ -72,4 +72,22 @@ module.exports = {
   decodeToken(token) {
     return jwt.decode(token);
   },
+
+  checkAdmin(req, res, next) {
+    const { authorization } = req.headers;
+    const { decodeToken } = this;
+
+    const decoded = decodeToken(authorization);
+    
+    if (decoded.is_admin) {
+      return next();
+    }
+
+    return res.status(401).json({
+      status: 401,
+      method: req.method,
+      message: 'Unauthorized',
+      data: null,
+    })
+  }
 };
