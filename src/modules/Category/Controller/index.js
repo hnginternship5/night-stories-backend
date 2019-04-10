@@ -52,33 +52,24 @@ module.exports.update = async (req, res) => {
   const { catId} = req.params;
 
   //Check if category exists
-  const findCat = Category.findById(catId);
+  Category.findById(catId, (err, category) => {
+    if (err) {
+      return sendJSONResponse(res, 409, null, req.method, "Category not Found!");
+    }
+    if (name) {
+      category.name = name;
+    }
 
-  //If category exists
-  if(findCat){
-      if(name){
-          const category = new Category();
-
-          category.name = name;
-          category.save();
-
-          sendJSONResponse(
-            res,
-            200,
-            { 
-              category
-             },
-            req.method,
-            "Category Updated Succesfully!"
-          );
-      }
-  } else{
-      return sendJSONResponse(
-        res,
-        404,
-        null,
-        req.method,
-        "Category Does Not Exist!"
-      );
-  }
+    category.save();
+    sendJSONResponse(
+      res,
+      200,
+      { 
+        category
+       },
+      req.method,
+      "Category Updated Succesfully!"
+    );
+  });
 };
+

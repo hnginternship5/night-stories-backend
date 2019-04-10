@@ -37,8 +37,8 @@ module.exports.register = async (req, res) => {
       user.email = email;
       user.password = bcrypt.hashSync(password, 10);
       user.designation = designation;
-      if (!is_admin) user.is_admin = false;
-      if (!is_premium) user.is_premium = false;
+      (!is_admin) ? user.is_admin = false: user.is_admin = true;
+      (!is_premium) ? user.is_premium = false: user.is_premium = true;
       user.save();
       const token = user.generateJWT();
       sendJSONResponse(
@@ -66,7 +66,7 @@ module.exports.register = async (req, res) => {
    * @return {json} res.json
    */
 module.exports.update = async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, is_admin, is_premium } = req.body;
   User.findById(req.params.userId, (err, user) => {
     if (err) {
       return sendJSONResponse(res, 409, null, req.method, "User not Found!");
@@ -94,6 +94,9 @@ module.exports.update = async (req, res) => {
         sendJSONResponse(res, 200, { user }, req.method, errs.message);
       }
     }
+
+    (is_admin) ? user.is_admin = is_admin : null;
+    (is_premium) ? user.is_premium = is_premium: null;
 
     user.save();
     sendJSONResponse(
