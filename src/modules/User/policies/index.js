@@ -12,11 +12,15 @@ module.exports.register = {
   },
 };
 
-module.exports.login = {
+
+module.exports.update = {
   body: {
-    email: joi.string().email().required(),
-    password: joi.string().alphanum().min(3).max(30)
-      .required(),
+    email: joi.string().email(),
+    name: joi.string(),
+    password: joi.string().alphanum().min(3).max(30),
   },
 };
+
+
+
 
