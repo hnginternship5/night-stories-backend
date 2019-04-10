@@ -2,7 +2,8 @@ const mongoose = require('mongoose');
 const { sign } = require('jsonwebtoken');
 const { jwtsecret } = require('../../config');
 
-const userSchema = new mongoose.Schema({
+const { Schema } = mongoose;
+const userSchema = new Schema({
   name: { type: String, required: true },
   email: { type: String, required: true },
   designation: {
@@ -14,9 +15,9 @@ const userSchema = new mongoose.Schema({
   is_premium: {
     type: Boolean,
   },
-  //@Brainz added image
+  // @Brainz added image
   image: {
-    type:String,
+    type: String,
   },
   imageId: {
     type: String,
@@ -41,11 +42,11 @@ const userSchema = new mongoose.Schema({
   // End of work
   password: {
     type: String,
-    required: true
+    required: true,
   },
   display_picture: {
-    type: String
-  }
+    type: String,
+  },
 
 }, { timestamps: true });
 
@@ -55,6 +56,7 @@ userSchema.methods.generateJWT = function generate() {
       _id: this._id,
       name: this.name,
       email: this.email,
+      admin: this.is_admin,
     },
     jwtsecret,
     {
