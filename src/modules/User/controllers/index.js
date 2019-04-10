@@ -1,9 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require('bcryptjs');
-const { sendJSONResponse } = require("../../../helpers");
-const jwt = require("jsonwebtoken");
-const auth = require("../../../helpers/auth");
-const { jwtsecret } = require('../../../config');
+const { sendJSONResponse, generateToken } = require("../../../helpers");
 
 const User = mongoose.model("User");
 
@@ -66,8 +63,9 @@ module.exports.update = async (req, res) => {
       user.email = email;
     }
     if (password) {
-      user.setPassword(password);
+      user.password = bcrypt.hashSync(password, 10);
     }
+
     user.save();
     sendJSONResponse(
       res,
@@ -127,6 +125,12 @@ module.exports.login = async (req, res) => {
    */
 module.exports.view_profile = async (req, res) => {
   const user = await User.findById({ _id: req.params.id });
-  sendJSONResponse(res, 200, { user }, req.method, 'View Profile');
+  if(user){
+    sendJSONResponse(res, 200, { user }, req.method, 'View Profile');
+  }
+  else{
+    sendJSONResponse(res, 404, null, req.method, 'User Not Found');
+  }
+  
 };
 

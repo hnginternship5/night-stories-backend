@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const { jwtsecret } = require('../config');
 
 module.exports = {
   sendJSONResponse(res, status, data, method, message) {
@@ -20,10 +21,26 @@ module.exports = {
 
   // check if token is valid,
   verifyToken(req, res, next) {
-    const { token } = req.headers;
+    const { authorization } = req.headers;
+    const {userId} = req.body;
 
     try {
-      jwt.verify(token, process.env.JWTSECRET);
+      const decoded = jwt.verify(authorization, jwtsecret);
+      console.log(decoded)
+
+      if(decoded.id === userId ){
+        return next();
+      }else{
+        return res.status(401).json({
+          status: 401,
+          method: req.method,
+          message: 'Unauthorized User',
+          data: null,
+        });
+      }
+
+
+      //
     } catch (e) {
       return res.status(400).json({
         status: 400,
@@ -32,16 +49,14 @@ module.exports = {
         data: null,
       });
     }
-
-    return next();
   },
 
   // check if is token exists,
   // passing an empty token to jwt throws errors
   checkTokenExists(req, res, next) {
-    const { token } = req.headers;
-
-    if (!token) {
+    const { authorization } = req.headers;
+    
+    if (!authorization) {
       return res.status(400).json({
         status: 400,
         method: req.method,
