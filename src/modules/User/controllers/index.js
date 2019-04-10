@@ -1,10 +1,17 @@
 const mongoose = require("mongoose");
-const { sendJSONResponse } = require("../../../helpers");
+const { sendJSONResponse, authenticate } = require("../../../helpers");
 const jwt = require("jsonwebtoken");
-const auth = require("../../../auth");
 
 const User = mongoose.model("User");
 
+/**
+   * Registers a new user
+   * @method register
+   * @memberof Users
+   * @param {object} req
+   * @param {object} res
+   * @returns {(function|object)} Function next() or JSON object
+   */
 module.exports.register = async (req, res) => {
   const { name, email, password, designation, is_admin, is_premium } = req.body;
 
@@ -13,7 +20,7 @@ module.exports.register = async (req, res) => {
       return sendJSONResponse(
         res,
         409,
-        "Registration failed!",
+        null,
         req.method,
         "User Already Exists!"
       );
@@ -72,7 +79,12 @@ module.exports.login = async (req, res) => {
 
   try {
     //Authenticate User
-    const user = await auth.authenticate(email, password);
+    const findUser = await User.findOne({email})
+
+    if(findUser) authenticate(password, findUser.password);
+
+    // const user = new User();
+    // user.veri
 
     //create JWT
     const token = jwt.sign(user.toJSON(), "secret1", {
