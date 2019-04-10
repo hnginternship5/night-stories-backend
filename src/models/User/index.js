@@ -1,7 +1,5 @@
 const mongoose = require('mongoose');
-const { randomBytes, pbkdf2Sync } = require('crypto');
 const { sign } = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
 const { jwtsecret } = require('../../config');
 
 const userSchema = new mongoose.Schema({
@@ -16,24 +14,40 @@ const userSchema = new mongoose.Schema({
   is_premium: {
     type: Boolean,
   },
+  //@Brainz added image
+  image: {
+    type:String,
+  },
+  imageId: {
+    type: String,
+  },
+  // @raji worked here
+  liked_story: [
+    {
+      story: {
+        type: Schema.Types.ObjectId,
+        ref: 'Story',
+      },
+    },
+  ],
+  bookmarks: [
+    {
+      story: {
+        type: Schema.Types.ObjectId,
+        ref: 'Story',
+      },
+    },
+  ],
+  // End of work
   password: {
     type: String,
     required: true
   },
+  display_picture: {
+    type: String
+  }
 
 }, { timestamps: true });
-
-// userSchema.methods.setPassword = function userPassword(password) {
-//   this.password = bcrypt.hashSync(password, 10);
-//   //this.password = pbkdf2Sync(password, this.salt, 100, 64, 'sha512').toString('hex');
-// };
-
-// userSchema.methods.verifyPassword = function verify(password, hashPassword) {
-//   return this.password === bcrypt.compare(password, hashPassword);
-//   // this.salt = randomBytes(16).toString('hex');
-//   // const hash = pbkdf2Sync(password, this.salt, 100, 64, 'sha512').toString('hex');
-//   // return this.hash === hash;
-// };
 
 userSchema.methods.generateJWT = function generate() {
   return sign(

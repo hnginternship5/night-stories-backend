@@ -18,7 +18,7 @@ module.exports.update = {
     email: joi.string().email(),
     name: joi.string(),
     password: joi.string().alphanum().min(3).max(30),
-    picture: joi.string()
+    display_picture: joi.string()
   },
 };
 

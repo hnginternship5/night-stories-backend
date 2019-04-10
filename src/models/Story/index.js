@@ -21,6 +21,16 @@ const storySchema = new mongoose.Schema({
   story_views: Number,
   status: String,
   like_count: Number,
+  // @raji Woked here
+  likes: [
+    {
+      user: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    },
+  ],
+  // Work ends here
 });
 
 const Story = mongoose.model('Story', storySchema);
