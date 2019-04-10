@@ -26,7 +26,7 @@ userSchema.methods.setPassword = function userPassword(password) {
 };
 
 userSchema.methods.verifyPassword = function verify(password) {
-  const hash = pbkdf2Sync(password, this.saly, 100, 64, 'sha512').toString('hex');
+  const hash = pbkdf2Sync(password, this.salt, 100, 64, 'sha512').toString('hex');
   return this.hash === hash;
 };
 

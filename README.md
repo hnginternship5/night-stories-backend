@@ -1,10 +1,35 @@
+# Nighttime-Stories :heart:
+## Basic Setup for the project
+
+1. Clone the project
+2. Run 
+    ```
+        npm
+    ```
+     install to install all dependencies
+3. Create a file in the folder name .env (It will contain your environment variables)
+4. In the file set your port and database url. An example is given below
+    ```
+        DBURI=mongodb://localhost:27017/my-db
+        PORT=3000
+    ```
+5. Ensure MongoDB is installed and running on your machine, so you don't get errors
+6. Type in your terminal
+    ```bash
+    npm run dev
+    ```
+7. No welcome page yet but you should get some json data in your browser when you load "localhost/:3000(or which ever port you entered in your .env)"
+
+
 # nodejs-api-template
 
 A starter Template to build Api's with Express Node and MongoDB.
 
 ```
-1 cp .env.example .env
-2 npm run dev
+1. cp .env.example .env
+2. npm i
+(Make sure you have mongodb installed)
+3. npm run dev
 ```
 ## Features
 
