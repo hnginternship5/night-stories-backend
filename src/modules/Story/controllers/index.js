@@ -13,7 +13,7 @@ module.exports.viewSingleStory = async (req, res) => {
   sendJSONResponse(res, 200, { story }, req.method, 'Story Fetched');
 };
 
- module.exports.create = async (req, res) => {
+module.exports.create = async (req, res) => {
   const { title, description } = req.body;
   const { token } = req.headers;
   const decoded = decodeToken(token);
