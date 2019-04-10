@@ -2,10 +2,12 @@ const mongoose = require('mongoose');
 const { randomBytes, pbkdf2Sync } = require('crypto');
 const { sign } = require('jsonwebtoken');
 const { jwtsecret } = require('../../config');
+const Schema = mongoose.Schema;
 
-const userSchema = new mongoose.Schema({
+const userSchema = new Schema({
   name: { type: String, required: true },
   email: { type: String, required: true },
+  password:{type:String, required: true},
   designation: {
     type: String,
   },
@@ -15,10 +17,29 @@ const userSchema = new mongoose.Schema({
   is_premium: {
     type: Boolean,
   },
+//@raji worked here
+  liked_story: [
+    {
+      story: {
+        type: Schema.Types.ObjectId,
+        ref: 'Story'
+      }
+    }
+  ],
+  bookmarks: [
+    {
+      story: {
+        type: Schema.Types.ObjectId,
+        ref: 'Story'
+      }
+    }
+  ],
+  //End of work
   hash: String,
   salt: String,
 
-}, { timestamps: true });
+},
+{ timestamps: true });
 
 userSchema.methods.setPassword = function userPassword(password) {
   this.salt = randomBytes(16).toString('hex');
