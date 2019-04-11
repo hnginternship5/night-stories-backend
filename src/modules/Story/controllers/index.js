@@ -183,3 +183,60 @@ module.exports.create = async (req, res) => {
       return sendJSONResponse(res, 400, null, req.method, 'Story Is Not Available'); 
     }
   };
+
+/**
+   * Like  Story
+   * @param {object} req - Request object
+   * @param {object} res - Response object
+   * @return {json} res.json
+   */
+module.exports.likeStory = async (req, res) => {
+  const { storyId } = req.params;
+  const user = decodeToken(req,res)._id;
+      
+  // Checking whether the story to be liked exist in the DB
+  const story = await Story.findById(storyId);
+
+  if (!story) {
+    return sendJSONResponse(res, 400, null, req.method, 'invalid story id');
+  }
+        
+  // Checking wheter the post have been liked or not
+  if (story.likes.filter(like => like.user.toString() === user).length > 0) {
+    return sendJSONResponse(res, 400, null, req.method, 'You have like this story already'); 
+  } 
+          
+  // like story
+  const test = await Story.update(
+    {_id: storyId},
+    {$push: {likes: {user}} }
+  );
+
+  return sendJSONResponse(res, 200, null, req.method, 'Story Liked');
+};
+
+module.exports.disLikeStory = async (req, res) => {
+  const { storyId } = req.params;
+  const user = decodeToken(req,res)._id;
+      
+  // Checking whether the story to be liked exist in the DB
+  const story = await Story.findById(storyId);
+
+  if (!story) {
+    return sendJSONResponse(res, 400, null, req.method, 'invalid story id');
+  }
+        
+  // Checking wheter the post have been liked or not
+  if (story.likes.filter(like => like.user.toString() === user).length === 0) {
+    return sendJSONResponse(res, 400, null, req.method, 'You have not like this story yet'); 
+  } 
+          
+  // like story
+  const test = await Story.update(
+    {_id: storyId},
+    {$pull: {likes: {user}} }
+  );
+
+  return sendJSONResponse(res, 200, null, req.method, 'Story Disliked');
+};
+

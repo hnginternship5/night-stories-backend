@@ -26,6 +26,7 @@ router.get('/:id', catchErrors(ctrlStory.viewSingleStory));
 router.get('/category/:catId', catchErrors(ctrlStory.viewStoriesByCategory));
 router.post('/create', checkTokenExists, verifyToken, expressValidator(validateStory.create), upload.single('image'), catchErrors(ctrlStory.create));
 router.put('/edit/:storyId', checkTokenExists, verifyToken, expressValidator(validateStory.update), upload.single('image'), catchErrors(ctrlStory.update));
-
+router.get('/like/:storyId', checkTokenExists, verifyToken, catchErrors(ctrlStory.likeStory));
+router.get('/dislike/:storyId', checkTokenExists, verifyToken, catchErrors(ctrlStory.disLikeStory));
 
 module.exports = router;
