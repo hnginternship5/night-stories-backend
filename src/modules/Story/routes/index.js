@@ -1,9 +1,8 @@
 const express = require('express');
 const multer = require('multer');
 const expressValidator = require('express-joi-validator');
-const ctrlUser = require('../controllers');
-const validateUser = require('../policies');
-const multer = require('multer');
+const ctrlStory = require('../controllers');
+const validateStory = require('../policies');
 const { catchErrors, verifyToken, checkTokenExists } = require('../../../helpers');
 
 const storage = multer.diskStorage({
@@ -20,11 +19,13 @@ const storage = multer.diskStorage({
   };
   const upload = multer({ storage, fileFilter: imageFilter });
 
+
 const router = express.Router();
+router.get('/', catchErrors(ctrlStory.viewStories));
+router.get('/:id', catchErrors(ctrlStory.viewSingleStory));
+router.get('/category/:catId', catchErrors(ctrlStory.viewStoriesByCategory));
+router.post('/create', checkTokenExists, verifyToken, expressValidator(validateStory.create), upload.single('image'), catchErrors(ctrlStory.create));
+router.put('/edit/:storyId', checkTokenExists, verifyToken, expressValidator(validateStory.create), upload.single('image'), catchErrors(ctrlStory.update));
 
-router.post('/register', expressValidator(validateUser.register), catchErrors(ctrlUser.register));
-router.put('/edit/:userId', checkTokenExists, verifyToken, expressValidator(validateUser.update), upload.single('image'), catchErrors(ctrlUser.update));
-router.get('/profile/:id', catchErrors(ctrlUser.view_profile));
-router.post('/login', expressValidator(validateUser.login), catchErrors(ctrlUser.login));
 
-module.exports = router; 
+module.exports = router;

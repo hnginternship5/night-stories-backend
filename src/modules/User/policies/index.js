@@ -12,11 +12,23 @@ module.exports.register = {
   },
 };
 
+
+module.exports.update = {
+  body: {
+    email: joi.string().email(),
+    name: joi.string(),
+    password: joi.string().alphanum().min(3).max(30),
+    display_picture: joi.string()
+  },
+};
+
 module.exports.login = {
   body: {
     email: joi.string().email().required(),
-    password: joi.string().alphanum().min(3).max(30)
-      .required(),
+    password: joi.string().alphanum().min(3).max(30).required(),
   },
 };
+
+
+
 
