@@ -7,14 +7,14 @@ require('chai/register-should');
 //USER TESTS
 const newUser = {
     name: 'Adesanya Adetomiwa',
-    email: 'paul@gmail.com',
+    email: 'pauloooo@gmail.com',
     designation: 'blah blah',
     is_admin: 'true',
     is_premium: 'true',
     password: 'bluwaters'
 }
 const badUser = {
-    email: 'wiz@gmail.com',
+    email: 'wizard@gmail.com',
     designation: 'blah blah',
     is_admin: 'true',
     is_premium: 'true',
@@ -63,3 +63,52 @@ describe('it should register new user', () => {
 });
 
 // Login User 
+describe('Login User', () => {
+    it('should login user', (done) => {
+        const loginUser = {
+            email: newUser.email,
+            password: newUser.password
+        }
+        chai
+          .request(app)
+          .post('/api/v1/user/login')
+          .send(loginUser)
+          .end((err, res) => {
+              res.should.have.property('status', 200);
+              res.body.data.should.have.property('id');
+              res.body.data.should.have.property('email');
+              res.body.data.should.have.property('admin');
+              res.body.data.should.have.property('premium');
+            done();
+          });
+    });
+    it('should not login a user with wrong password', (done) => {
+        const wrongPassword = {
+            email: newUser.email,
+            password: 'wrong'
+        }
+        chai
+          .request(app)
+          .post('/api/v1/user/login')
+          .send(wrongPassword)
+          .end((err, res) => {
+              res.should.have.property('status', 401);
+            done();
+        });
+
+    });
+    it('should not login a user that has not signed up', (done) => {
+        const notRegistered = {
+            email: 'sample@yahoo.com',
+            password: 'password'
+        }
+        chai
+          .request(app)
+          .post('/api/v1/user/login')
+          .send(notRegistered)
+          .end((err, res) => {
+              res.should.have.property('status', 404);
+            done();
+          });
+    });
+});
