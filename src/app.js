@@ -2,6 +2,8 @@
 require('dotenv').config({ path: '.env' });
 const express = require('express');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const passport = require('passport');
 
 const app = express();
 const chalk = require('./config/chalk');
@@ -18,6 +20,7 @@ if (config.env !== 'test') {
 }
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({ limit: '52428800' }));
+app.use(cookieParser());
 const apiRoutes = require('./router');
 
 app.use('/api/v1', apiRoutes);
@@ -25,6 +28,10 @@ app.use((req, res, next) => {
   const err = new Error('Not Found');
   err.status = 404;
   next(err);
+});
+
+app.get('/api/getuser', passport.authenticate('jwt', { session: false }), (req, res) => {
+  res.send(req.user);
 });
 
 app.use((err, req, res, next) => {
