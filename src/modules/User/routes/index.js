@@ -26,5 +26,7 @@ router.put('/edit/:userId', checkTokenExists, verifyToken, expressValidator(vali
 router.get('/profile/:id', catchErrors(ctrlUser.view_profile));
 router.post('/login', expressValidator(validateUser.login), catchErrors(ctrlUser.login));
 router.get('/all', checkTokenExists, verifyToken, catchErrors(ctrlUser.allUsers));
+router.delete('/delete/:userId', checkTokenExists, checkAdmin, catchErrors(ctrlUser.deleteUser));
+
 
 module.exports = router; 

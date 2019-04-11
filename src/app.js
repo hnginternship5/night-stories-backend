@@ -18,8 +18,8 @@ require('./models');
 if (config.env !== 'test') {
   app.use(morgan('dev'));
 }
-app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({ limit: '52428800' }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use(function(req, res, next) {

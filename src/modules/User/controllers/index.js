@@ -58,7 +58,7 @@ module.exports.register = async (req, res) => {
     }
   });
 };
-
+ 
 /**
    * Update User Profile
    * @param {object} req - Request object
@@ -170,8 +170,12 @@ module.exports.login = async (req, res) => {
    * @return {json} res.json
    */
 module.exports.view_profile = async (req, res) => {
-  const user = await User.findById({ _id: req.params.id });
-  if(user){
+
+  User.findById(req.params.id, (err, user) => {
+    if (err) {
+      return sendJSONResponse(res, 404, null, req.method, 'User Not Found');
+    }
+
     sendJSONResponse(
       res, 
       200, 
@@ -185,10 +189,7 @@ module.exports.view_profile = async (req, res) => {
        req.method, 
        'View Profile'
        );
-  }
-  else{
-    sendJSONResponse(res, 404, null, req.method, 'User Not Found');
-  }
+  })
   
 };
 
@@ -218,8 +219,35 @@ module.exports.view_profile = async (req, res) => {
         );
     }
     else{
-      sendJSONResponse(res, 200, null, req.method, 'No user available');
+      sendJSONResponse(res, 404, null, req.method, 'No user available');
     }
     
   };
+
+  /**
+   * Delete User 
+   * @param {object} req - Request object
+   * @param {object} res - Response object
+   * @return {json} res.json
+   */
+  module.exports.deleteUser = async (req, res) => {
+    const { userId } = req.params;
+
+    User.findByIdAndRemove(userId, (err, user) => {
+    
+      if (err) {
+        return sendJSONResponse(res, 404, null, req.method, 'User Not Found');
+      }
+    
+      sendJSONResponse(
+        res, 
+        200, 
+        null, 
+         req.method, 
+         'User Deleted Successfully'
+         );
+});
+    
+  };
+
 
