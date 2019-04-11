@@ -9,7 +9,7 @@ module.exports.create = {
 
 module.exports.update = {
   body: {
-    name: joi.string()
+    name: joi.string().required(),
   },
 };
 
