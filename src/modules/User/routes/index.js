@@ -2,6 +2,7 @@ const express = require('express');
 const expressValidator = require('express-joi-validator');
 const ctrlUser = require('../controllers');
 const validateUser = require('../policies');
+const multer = require('multer');
 const { catchErrors, verifyToken, checkTokenExists } = require('../../../helpers');
 
 const storage = multer.diskStorage({
