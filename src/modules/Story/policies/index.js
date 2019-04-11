@@ -9,3 +9,12 @@ module.exports.create = {
   },
 };
 
+module.exports.update = {
+  body: {
+    title: joi.string(),
+    story: joi.string(),
+    image: joi.string(),
+    category: joi.string()
+  },
+};
+

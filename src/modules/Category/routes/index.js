@@ -1,6 +1,6 @@
 const express = require('express');
 const expressValidator = require('express-joi-validator');
-const ctrlAdmin = require('../controller');
+const ctrlAdmin = require('../Controller');
 const validateInput = require('../policies');
 const { catchErrors, verifyToken, checkTokenExists, checkAdmin } = require('../../../helpers');
 
