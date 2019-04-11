@@ -192,3 +192,34 @@ module.exports.view_profile = async (req, res) => {
   
 };
 
+/**
+   * Get all User Profile
+   * @param {object} req - Request object
+   * @param {object} res - Response object
+   * @return {json} res.json
+   */
+  module.exports.allUsers = async (req, res) => {
+    const except = {
+      _v: false,
+      password: false,
+      salt: false,
+      hash: false, 
+    }
+    const user = await User.find({}, except);
+    
+
+    if(user){
+      sendJSONResponse(
+        res, 
+        200, 
+        user,
+        req.method, 
+        'All users',
+        );
+    }
+    else{
+      sendJSONResponse(res, 200, null, req.method, 'No user available');
+    }
+    
+  };
+

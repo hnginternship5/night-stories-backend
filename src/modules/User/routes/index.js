@@ -3,7 +3,7 @@ const multer = require('multer');
 const expressValidator = require('express-joi-validator');
 const ctrlUser = require('../controllers');
 const validateUser = require('../policies');
-const { catchErrors, verifyToken, checkTokenExists } = require('../../../helpers');
+const { catchErrors, verifyToken, checkTokenExists, checkAdmin } = require('../../../helpers');
 
 const storage = multer.diskStorage({
     filename(_req, file, callback) {
@@ -25,5 +25,6 @@ router.post('/register', expressValidator(validateUser.register), catchErrors(ct
 router.put('/edit/:userId', checkTokenExists, verifyToken, expressValidator(validateUser.update), upload.single('image'), catchErrors(ctrlUser.update));
 router.get('/profile/:id', catchErrors(ctrlUser.view_profile));
 router.post('/login', expressValidator(validateUser.login), catchErrors(ctrlUser.login));
+router.get('/all', checkTokenExists, verifyToken, catchErrors(ctrlUser.allUsers));
 
 module.exports = router; 
