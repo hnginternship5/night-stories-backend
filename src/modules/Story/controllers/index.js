@@ -37,6 +37,10 @@ module.exports.viewStories = async (req, res) => {
   module.exports.viewStoriesByCategory = async (req, res) => {
     const { catId } = req.params;
 
+    if (!catId.match(/^[0-9a-fA-F]{24}$/)) {
+      return sendJSONResponse(res, 400, null, req.method, 'Invalid Category ID');
+    }
+
     const findCat = await Category.findOne({name:catId});
 
     //Check if category exists
@@ -69,6 +73,10 @@ module.exports.viewStories = async (req, res) => {
    */
 module.exports.viewSingleStory = async (req, res) => {
   const { id } = req.params;
+
+  if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+    return sendJSONResponse(res, 400, null, req.method, 'Invalid Story ID');
+  }
 
   Story.findById(id, (err, story) => {
     if (err) {
@@ -132,6 +140,10 @@ module.exports.create = async (req, res) => {
   module.exports.update = async (req, res) => {
     const { title, story, category } = req.body;
     const { storyId } = req.params;
+
+    if (!storyId.match(/^[0-9a-fA-F]{24}$/)) {
+      return sendJSONResponse(res, 400, null, req.method, 'Invalid Story ID');
+    }
   
     // check if category is a available one
     if(category){

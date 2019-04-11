@@ -51,6 +51,10 @@ module.exports.update = async (req, res) => {
   const { name } = req.body;
   const { catId } = req.params;
 
+  if (!catId.match(/^[0-9a-fA-F]{24}$/)) {
+    return sendJSONResponse(res, 400, null, req.method, 'Invalid Category ID');
+  }
+
   // Check if category exists
   Category.findById(catId, (err, category) => {
     if (err) {
@@ -105,6 +109,10 @@ module.exports.getAll = async (req, res) => {
 
 module.exports.delete = async (req, res) => {
   const { catId } = req.params;
+
+  if (!catId.match(/^[0-9a-fA-F]{24}$/)) {
+    return sendJSONResponse(res, 400, null, req.method, 'Invalid Category ID');
+  }
 
   // Check if category exists
   const findCat = await Category.findOne({ _id: catId });

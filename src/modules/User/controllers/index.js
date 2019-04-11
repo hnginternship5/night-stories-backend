@@ -39,6 +39,7 @@ module.exports.register = async (req, res) => {
       user.designation = designation;
       (!is_admin) ? user.is_admin = false: user.is_admin = true;
       (!is_premium) ? user.is_premium = false: user.is_premium = true;
+      user.image = "https://res.cloudinary.com/ephaig/image/upload/v1555015808/download.png";
       user.save();
       const token = user.generateJWT();
       sendJSONResponse(
@@ -67,7 +68,13 @@ module.exports.register = async (req, res) => {
    */
 module.exports.update = async (req, res) => {
   const { name, email, password, is_admin, is_premium } = req.body;
-  User.findById(req.params.userId, (err, user) => {
+  const { userId } = req.params;
+
+  if (!userId.match(/^[0-9a-fA-F]{24}$/)) {
+    return sendJSONResponse(res, 400, null, req.method, 'Invalid User ID');
+  }
+
+  User.findById(userId, (err, user) => {
     if (err) {
       return sendJSONResponse(res, 409, null, req.method, "User not Found!");
     }
@@ -171,25 +178,32 @@ module.exports.login = async (req, res) => {
    */
 module.exports.view_profile = async (req, res) => {
 
-  User.findById(req.params.id, (err, user) => {
-    if (err) {
+  const { id } = req.params;
+
+  if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+    return sendJSONResponse(res, 400, null, req.method, 'Invalid User ID');
+  }
+
+  const user = await User.findOne({_id:id});
+
+  if (user === null) {
       return sendJSONResponse(res, 404, null, req.method, 'User Not Found');
     }
 
-    sendJSONResponse(
-      res, 
-      200, 
-      { 
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        admin: user.is_admin,
-        premium: user.is_premium
-       }, 
-       req.method, 
-       'View Profile'
-       );
-  })
+  sendJSONResponse(
+    res, 
+    200, 
+    { 
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      admin: user.is_admin,
+      premium: user.is_premium,
+      image: user.image
+      }, 
+      req.method, 
+      'View Profile'
+      );
   
 };
 
@@ -233,11 +247,16 @@ module.exports.view_profile = async (req, res) => {
   module.exports.deleteUser = async (req, res) => {
     const { userId } = req.params;
 
-    User.findByIdAndRemove(userId, (err, user) => {
     
-      if (err) {
-        return sendJSONResponse(res, 404, null, req.method, 'User Not Found');
-      }
+    if (!userId.match(/^[0-9a-fA-F]{24}$/)) {
+      return sendJSONResponse(res, 400, null, req.method, 'Invalid User ID');
+    }
+
+    const user = await User.findById(userId);
+
+    if(user === null) {
+      return sendJSONResponse(res, 404, null, req.method, 'User Not Found');
+    }
     
       sendJSONResponse(
         res, 
@@ -246,8 +265,8 @@ module.exports.view_profile = async (req, res) => {
          req.method, 
          'User Deleted Successfully'
          );
-});
+};
     
-  };
+ 
 
 
