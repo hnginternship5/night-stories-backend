@@ -1,7 +1,7 @@
-const mongoose = require("mongoose");
-const { sendJSONResponse } = require("../../../helpers");
+const mongoose = require('mongoose');
+const { sendJSONResponse } = require('../../../helpers');
 
-const Category = mongoose.model("Category");
+const Category = mongoose.model('Category');
 
 /**
    * Create Category
@@ -24,7 +24,7 @@ module.exports.create = async (req, res) => {
         req.method,
         "Category Already Exists!"
     )
-  } else {
+  } 
       const category = new Category();
 
       category.name = name;
@@ -38,7 +38,7 @@ module.exports.create = async (req, res) => {
           req.method,
           "New Category Created"
       )
-  }
+  
 };
 
 /**
@@ -49,12 +49,12 @@ module.exports.create = async (req, res) => {
    */
 module.exports.update = async (req, res) => {
   const { name } = req.body;
-  const { catId} = req.params;
+  const { catId } = req.params;
 
-  //Check if category exists
+  // Check if category exists
   Category.findById(catId, (err, category) => {
     if (err) {
-      return sendJSONResponse(res, 409, null, req.method, "Category not Found!");
+      return sendJSONResponse(res, 409, null, req.method, 'Category not Found!');
     }
     if (name) {
       category.name = name;
@@ -64,12 +64,43 @@ module.exports.update = async (req, res) => {
     sendJSONResponse(
       res,
       200,
-      { 
-        category
-       },
+      {
+        category,
+      },
       req.method,
-      "Category Updated Succesfully!"
+      'Category Updated Succesfully!',
     );
   });
 };
+
+/**
+   * Get all category
+   * @param {object} req - Request object
+   * @param {object} res - Response object
+   * @return {json} res.json
+   */
+module.exports.getAll = async (req, res) => {
+  const category = await Category.find({}, 'name');
+
+  if (category) {
+    return sendJSONResponse(
+      res,
+      200,
+      category,
+      req.method,
+      ' All Categories sent Succesfully!',
+    );
+  }
+
+  return sendJSONResponse(
+    res,
+    200,
+    {
+      category,
+    },
+    req.method,
+    'No category available',
+  );
+};
+
 
