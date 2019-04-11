@@ -10,8 +10,8 @@ const Category = mongoose.model('Category');
    * @return {json} res.json
    */
 module.exports.create = async (req, res) => {
-  const { name } = req.body;
-
+  let { name } = req.body;
+  name = name.toLowerCase(); 
   //Check if category exists
   const findCat = await Category.findOne({ name });
 
