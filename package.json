@@ -10,6 +10,7 @@
 		"bcryptjs": "^2.4.3",
 		"body-parser": "^1.18.2",
 		"chalk": "^2.3.2",
+		"cloudinary": "^1.14.0",
 		"debug": "^3.1.0",
 		"dotenv": "^5.0.1",
 		"express": "^4.16.3",
@@ -19,6 +20,7 @@
 		"jsonwebtoken": "^8.2.0",
 		"mongoose": "^5.0.12",
 		"morgan": "^1.9.0",
+		"multer": "^1.4.1",
 		"winston": "^2.4.1"
 	},
 	"devDependencies": {

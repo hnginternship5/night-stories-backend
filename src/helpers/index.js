@@ -22,13 +22,13 @@ module.exports = {
   // check if token is valid,
   verifyToken(req, res, next) {
     const { authorization } = req.headers;
-    const {userId} = req.body;
+    const {userId} = req.params;
 
     try {
       const decoded = jwt.verify(authorization, jwtsecret);
-      console.log(decoded)
 
       if(decoded.id === userId ){
+        req.id = decoded.id;
         return next();
       }else{
         return res.status(401).json({
@@ -38,8 +38,6 @@ module.exports = {
           data: null,
         });
       }
-
-
       //
     } catch (e) {
       return res.status(400).json({
@@ -51,7 +49,7 @@ module.exports = {
     }
   },
 
-  // check if is token exists,
+  // check if token exists,
   // passing an empty token to jwt throws errors
   checkTokenExists(req, res, next) {
     const { authorization } = req.headers;
@@ -68,26 +66,27 @@ module.exports = {
     return next();
   },
 
-  // decode token and return it
-  decodeToken(token) {
-    return jwt.decode(token);
+  //decode token
+  decodeToken(req, res){
+    const { authorization } = req.headers
+    return jwt.verify(authorization, jwtsecret)
   },
 
+  // decode admin token and return it
   checkAdmin(req, res, next) {
     const { authorization } = req.headers;
-    const { decodeToken } = this;
 
-    const decoded = decodeToken(authorization);
-    
-    if (decoded.is_admin) {
+    const decoded = jwt.decode(authorization);
+    if (decoded.admin) {
       return next();
     }
-
-    return res.status(401).json({
-      status: 401,
-      method: req.method,
-      message: 'Unauthorized',
-      data: null,
-    })
+    else{
+      return res.status(401).json({
+        status: 401,
+        method: req.method,
+        message: 'Only Admin Access',
+        data: null,
+      })
+    }
   }
 };

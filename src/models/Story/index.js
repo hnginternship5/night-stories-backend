@@ -2,12 +2,17 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const storySchema = new Schema({
-  cat_id: String,
-  story_title: {
+  cat_id: [
+    { 
+      type: Schema.Types.ObjectId, 
+      ref: 'Category' 
+    }
+  ],
+  title: {
     type: String,
     required: true,
   },
-  story_description: {
+  story: {
     type: String,
     required: true,
   },
@@ -15,11 +20,17 @@ const storySchema = new Schema({
     type: String,
     required: true,
   },
-  story_release_date: {
+  image: {
+    type: String,
+  },
+  imageId: {
+    type: String,
+  },
+  release_date: {
     type: Date,
     default: Date.now,
   },
-  story_views: Number,
+  views: Number,
   status: String,
   like_count: Number,
   // @raji Woked here
