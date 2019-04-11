@@ -20,7 +20,7 @@ cloudinary.config({
    * @return {json} res.json
    */
 module.exports.viewStories = async (req, res) => {
-  const stories = await Story.find({});
+  const stories = await Story.find({}).populate('cat_id','name');
 
   if(stories)
     sendJSONResponse(res, 200, { stories }, req.method, 'Stories Fetched');
@@ -63,7 +63,7 @@ module.exports.viewStories = async (req, res) => {
 module.exports.viewSingleStory = async (req, res) => {
   const { id } = req.params;
 
-  const story = await Story.findById({ _id: id });
+  const story = await Story.findById({ _id: id }).populate('cat_id', 'name');
 
   //If story exists
   if(story)
