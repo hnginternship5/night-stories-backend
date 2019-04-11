@@ -39,7 +39,7 @@
 		"sinon": "^4.5.0"
 	},
 	"scripts": {
-		"test": "./node_modules/.bin/cross-env NODE_ENV=test ./node_modules/.bin/mocha ./test/**/*.spec.js --exit",
+		"test": "mocha ./test  --timeout 10000 --exit",
 		"test-watch": "nodemon --exec 'npm test'",
 		"coverage": "./node_modules/.bin/cross-env NODE_ENV=test nyc ./node_modules/.bin/mocha ./test/**/*.spec.js --exit",
 		"testenv": "./node_modules/.bin/cross-env NODE_ENV=test node ./src/app.js",
