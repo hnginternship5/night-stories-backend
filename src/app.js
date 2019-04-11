@@ -43,4 +43,4 @@ app.use((err, req, res, next) => {
 
 app.listen(config.port, () => logger.info(chalk.blue('APP RUNNING ON '), config.port));
 
-module.exports = { app };
+module.exports = app ;
