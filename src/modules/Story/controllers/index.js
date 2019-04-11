@@ -232,7 +232,7 @@ module.exports.disLikeStory = async (req, res) => {
   } 
           
   // like story
-  const test = await Story.update(
+  await Story.update(
     {_id: storyId},
     {$pull: {likes: {user}} }
   );
@@ -240,3 +240,19 @@ module.exports.disLikeStory = async (req, res) => {
   return sendJSONResponse(res, 200, null, req.method, 'Story Disliked');
 };
 
+module.exports.deleteStory = async (req, res) => {
+  const { storyId } = req.params;
+      
+  // Checking whether the story to be deleted exist in the DB
+  const story = await Story.findById(storyId);
+
+  if (!story) {
+    return sendJSONResponse(res, 404, null, req.method, 'story does not exist');
+  }
+        
+          
+  // delete story
+  await Story.findOneAndRemove({_id: storyId});
+
+  return sendJSONResponse(res, 204, null, req.method, 'Story Deleted');
+};
