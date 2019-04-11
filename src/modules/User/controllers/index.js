@@ -154,12 +154,12 @@ module.exports.login = async (req, res) => {
     }
     else{
       //User password is wrong
-      sendJSONResponse(res, 401, null, req.method, 'User Not Authenticated');
+      sendJSONResponse(res, 401, null, req.method, 'User details incorrect');
     }
 
   }else{
     //user Unauthorized
-    sendJSONResponse(res, 404, null, req.method, 'User Not Found');
+    sendJSONResponse(res, 404, null, req.method, 'User details incorrect');
   }
 };
 
