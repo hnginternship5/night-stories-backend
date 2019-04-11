@@ -25,7 +25,7 @@ router.post(
       user: req.user.id,
       designation: req.body.designation,
     });
-
+ 
     // Story Been saved to the Story DB
     newStory.save().then(story => res.json(story));
   },

@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require('bcryptjs');
-const { sendJSONResponse, generateToken } = require("../../../helpers");
+const { sendJSONResponse } = require("../../../helpers");
 
 const User = mongoose.model("User");
 
@@ -91,7 +91,7 @@ module.exports.update = async (req, res) => {
         user.imageId = imageId;
         user.image = image;
       } catch (errs) {
-        sendJSONResponse(res, 200, { user }, req.method, errs.message);
+        return sendJSONResponse(res, 400, null, req.method, "Error Adding Image");
       }
     }
 
@@ -107,7 +107,8 @@ module.exports.update = async (req, res) => {
         name: user.name,
         email: user.email,
         admin: user.is_admin,
-        premium: user.is_premium
+        premium: user.is_premium,
+        image: user.image
        },
       req.method,
       "User Updated Succesfully!"

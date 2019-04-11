@@ -28,6 +28,7 @@ module.exports = {
       const decoded = jwt.verify(authorization, jwtsecret);
 
       if(decoded.id === userId ){
+        req.id = decoded.id;
         return next();
       }else{
         return res.status(401).json({
@@ -65,12 +66,17 @@ module.exports = {
     return next();
   },
 
-  // decode token and return it
+  //decode token
+  decodeToken(req, res){
+    const { authorization } = req.headers
+    return jwt.verify(authorization, jwtsecret)
+  },
+
+  // decode admin token and return it
   checkAdmin(req, res, next) {
     const { authorization } = req.headers;
 
     const decoded = jwt.decode(authorization);
-    
     if (decoded.admin) {
       return next();
     }

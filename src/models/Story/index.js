@@ -2,18 +2,29 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const storySchema = new Schema({
-  cat_id: String,
+  cat_id: [
+    { 
+      type: Schema.Types.ObjectId, 
+      ref: 'Category' 
+    }
+  ],
   title: {
     type: String,
     required: true,
   },
-  description: {
+  story: {
     type: String,
     required: true,
   },
   designation: {
     type: String,
     required: true,
+  },
+  image: {
+    type: String,
+  },
+  imageId: {
+    type: String,
   },
   release_date: {
     type: Date,
