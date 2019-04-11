@@ -1,4 +1,5 @@
 const express = require('express');
+const multer = require('multer');
 const expressValidator = require('express-joi-validator');
 const ctrlUser = require('../controllers');
 const validateUser = require('../policies');

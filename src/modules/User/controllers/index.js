@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require('bcryptjs');
-const { sendJSONResponse, generateToken } = require("../../../helpers");
+const { sendJSONResponse } = require("../../../helpers");
 
 const User = mongoose.model("User");
 
@@ -37,8 +37,8 @@ module.exports.register = async (req, res) => {
       user.email = email;
       user.password = bcrypt.hashSync(password, 10);
       user.designation = designation;
-      if (!is_admin) user.is_admin = false;
-      if (!is_premium) user.is_premium = false;
+      (!is_admin) ? user.is_admin = false: user.is_admin = true;
+      (!is_premium) ? user.is_premium = false: user.is_premium = true;
       user.save();
       const token = user.generateJWT();
       sendJSONResponse(
@@ -66,7 +66,7 @@ module.exports.register = async (req, res) => {
    * @return {json} res.json
    */
 module.exports.update = async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, is_admin, is_premium } = req.body;
   User.findById(req.params.userId, (err, user) => {
     if (err) {
       return sendJSONResponse(res, 409, null, req.method, "User not Found!");
@@ -91,9 +91,12 @@ module.exports.update = async (req, res) => {
         user.imageId = imageId;
         user.image = image;
       } catch (errs) {
-        sendJSONResponse(res, 200, { user }, req.method, errs.message);
+        return sendJSONResponse(res, 400, null, req.method, "Error Adding Image");
       }
     }
+
+    (is_admin) ? user.is_admin = is_admin : null;
+    (is_premium) ? user.is_premium = is_premium: null;
 
     user.save();
     sendJSONResponse(
@@ -104,7 +107,8 @@ module.exports.update = async (req, res) => {
         name: user.name,
         email: user.email,
         admin: user.is_admin,
-        premium: user.is_premium
+        premium: user.is_premium,
+        image: user.image
        },
       req.method,
       "User Updated Succesfully!"
