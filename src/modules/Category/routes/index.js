@@ -7,6 +7,7 @@ const { catchErrors, verifyToken, checkTokenExists, checkAdmin } = require('../.
 const router = express.Router();
 
 router.post('/create', checkTokenExists, verifyToken, checkAdmin, expressValidator(validateInput.create), catchErrors(ctrlAdmin.create));
+router.get('/all', catchErrors(ctrlAdmin.getAll));
 router.put('/edit/:catId', checkTokenExists, verifyToken, checkAdmin, expressValidator(validateInput.update), catchErrors(ctrlAdmin.update));
 module.exports = router;
  
