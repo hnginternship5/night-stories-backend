@@ -170,9 +170,8 @@ module.exports.login = async (req, res) => {
    * @return {json} res.json
    */
 module.exports.view_profile = async (req, res) => {
-
-  User.findById(req.params.id, (err, user) => {
-    if (err) {
+  const user = await User.findById(req.params.id);
+    if (user === null) {
       return sendJSONResponse(res, 404, null, req.method, 'User Not Found');
     }
 
@@ -189,7 +188,6 @@ module.exports.view_profile = async (req, res) => {
        req.method, 
        'View Profile'
        );
-  })
   
 };
 
@@ -233,6 +231,8 @@ module.exports.view_profile = async (req, res) => {
   module.exports.deleteUser = async (req, res) => {
     const { userId } = req.params;
 
+    const us = await User.findById(userId);
+    console.log(us);
     User.findByIdAndRemove(userId, (err, user) => {
     
       if (err) {
