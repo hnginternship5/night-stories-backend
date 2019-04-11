@@ -1,34 +1,36 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const storySchema = new Schema({
   cat_id: [
-    { 
-      type: Schema.Types.ObjectId, 
-      ref: 'Category' 
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Category"
     }
   ],
   title: {
     type: String,
     required: true,
+    unique: true,
+    lowercase: true
   },
   story: {
     type: String,
-    required: true,
+    required: true
   },
   designation: {
     type: String,
-    required: true,
+    required: true
   },
   image: {
-    type: String,
+    type: String
   },
   imageId: {
-    type: String,
+    type: String
   },
   release_date: {
     type: Date,
-    default: Date.now,
+    default: Date.now
   },
   views: Number,
   status: String,
@@ -38,14 +40,13 @@ const storySchema = new Schema({
     {
       user: {
         type: Schema.Types.ObjectId,
-        ref: 'User',
-      },
-    },
-  ],
+        ref: "User"
+      }
+    }
+  ]
   // Work ends here
 });
 
-const Story = mongoose.model('Story', storySchema);
+const Story = mongoose.model("Story", storySchema);
 
 module.exports = Story;
-

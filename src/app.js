@@ -1,53 +1,59 @@
 /* eslint-disable no-unused-vars */
-require('dotenv').config({ path: '.env' });
-const express = require('express');
-const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
-const passport = require('passport');
+require("dotenv").config({ path: ".env" });
+const express = require("express");
+const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
+const passport = require("passport");
 
 const app = express();
-const chalk = require('./config/chalk');
-const config = require('./config');
+const chalk = require("./config/chalk");
+const config = require("./config");
 
-const morgan = require('morgan');
-const { sendJSONResponse } = require('./helpers');
-const logger = require('./config/logger');
+const morgan = require("morgan");
+const { sendJSONResponse } = require("./helpers");
+const logger = require("./config/logger");
 
-require('./models');
+require("./models");
 
-if (config.env !== 'test') {
-  app.use(morgan('dev'));
+if (config.env !== "test") {
+  app.use(morgan("dev"));
 }
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json({ limit: '52428800' }));
+app.use(bodyParser.json({ limit: "52428800" }));
 app.use(cookieParser());
-const apiRoutes = require('./router');
+const apiRoutes = require("./router");
 
-app.use('/api/v1', apiRoutes);
+app.use("/api/v1", apiRoutes);
 app.use((req, res, next) => {
-  const err = new Error('Not Found');
+  const err = new Error("Not Found");
   err.status = 404;
   next(err);
 });
 
-app.get('/api/getuser', passport.authenticate('jwt', { session: false }), (req, res) => {
-  res.send(req.user);
-});
+app.get(
+  "/api/getuser",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    res.send(req.user);
+  }
+);
 
 app.use((err, req, res, next) => {
-  if (config.env !== 'test') {
-    logger.error('THIS IS ERR', err);
+  if (config.env !== "test") {
+    logger.error("THIS IS ERR", err);
   }
   if (err.isBoom) {
     const { message } = err.data[0];
     sendJSONResponse(res, err.output.statusCode, null, req.method, message);
   } else if (err.status === 404) {
-    sendJSONResponse(res, err.status, null, req.method, 'Not Found');
+    sendJSONResponse(res, err.status, null, req.method, "Not Found");
   } else {
-    sendJSONResponse(res, 500, null, req.method, 'Something Went Wrong!');
+    sendJSONResponse(res, 500, null, req.method, "Something Went Wrong!");
   }
 });
 
-app.listen(config.port, () => logger.info(chalk.blue('APP RUNNING ON '), config.port));
+app.listen(config.port, () =>
+  logger.info(chalk.blue("APP RUNNING ON "), config.port)
+);
 
-module.exports = app ;
+module.exports = app;
