@@ -42,9 +42,16 @@ module.exports.viewStories = async (req, res) => {
     //Check if category exists
     if(findCat){
       const stories = findCat.stories;
+
+      const storyArray = [];
+      for (let i = 0; i < stories.length; i++) {
+        const story = stories[i];
+        const st = await Story.findOne(story);
+        storyArray.push(st);
+      }
       
       if(stories)
-        return sendJSONResponse(res, 200, { stories }, req.method, `Stories Grouped By Category Fetched`);
+        return sendJSONResponse(res, 200, { storyArray }, req.method, `Stories Grouped By Category Fetched`);
       else
         return sendJSONResponse(res, 500, null, req.method, 'Stories Could Not Be Fetched');  
     }
@@ -63,13 +70,14 @@ module.exports.viewStories = async (req, res) => {
 module.exports.viewSingleStory = async (req, res) => {
   const { id } = req.params;
 
-  const story = await Story.findById({ _id: id });
+  Story.findById(id, (err, story) => {
+    if (err) {
+      return sendJSONResponse(res, 409, null, req.method, "Story Is Not Available!");
+    }
 
-  //If story exists
-  if(story)
-    sendJSONResponse(res, 200, { story }, req.method, 'Story Fetched');
-  else
-    return sendJSONResponse(res, 400, null, req.method, 'Story Is Not Available');  
+    return sendJSONResponse(res, 200, { story }, req.method, 'Story Fetched');
+  });
+
 };
 
 /**
@@ -127,18 +135,24 @@ module.exports.create = async (req, res) => {
     const { storyId } = req.params;
   
     // check if category is a available one
-    const catResult = await Category.findOne({ name: category });
+    if(category){
+      const catResult = await Category.findOne({ name: category });
 
-    //check if category still exists or has been changed
-    if (!catResult) {
-      return sendJSONResponse(res, 400, null, req.method, 'Category Cannot Be Found');
+      //check if category still exists or has been changed
+      if (!catResult) {
+        return sendJSONResponse(res, 400, null, req.method, 'Category Cannot Be Found');
+      }
     }
+      
   
     //If category exists
     const findStory = await Story.findById(storyId);
 
-    const isAdmin = await User.findById(req.id);
-
+    //check if user is admin
+    const user = await decodeToken(req, res);
+    console.log(user)
+    const isAdmin = await User.findById(user._id);
+    console.log(isAdmin)
     if(req.id !== findStory.designation && isAdmin.is_admin !== true){
       return sendJSONResponse(res, 401, null, req.method, "Unauthorized User");
     }

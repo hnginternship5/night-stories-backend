@@ -69,7 +69,7 @@ module.exports = {
   //decode token
   decodeToken(req, res){
     const { authorization } = req.headers
-    return jwt.verify(authorization, jwtsecret)
+    return jwt.decode(authorization);
   },
 
   // decode admin token and return it

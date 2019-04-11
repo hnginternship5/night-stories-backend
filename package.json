@@ -46,7 +46,8 @@
 		"dev": "./node_modules/.bin/cross-env NODE_ENV=development nodemon ./src/app.js",
 		"debug": "DEBUG=* node ./src/app.js",
 		"lint": "eslint src/**/*.js",
-		"lint:fix": "eslint src/**/*.js  --fix"
+		"lint:fix": "eslint src/**/*.js  --fix",
+		"start": "node ./src/app.js"
 	},
 	"repository": {
 		"type": "git",
