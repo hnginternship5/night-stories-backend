@@ -12,9 +12,7 @@ module.exports.getAllFavorite = async (req, res) => {
     // if it is, return the user's bookmark and populate it with stories
     const bookmark = await Bookmark.find({ user: user._id }).populate('story');
 
-    console.log(bookmark.length);
-
-    //sendJSONResponse(res, 200, { bookmark }, req.method, 'Bookmark fetched');
+    sendJSONResponse(res, 200, { bookmark }, req.method, 'Bookmark fetched');
   
 };
 
