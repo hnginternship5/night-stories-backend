@@ -6,7 +6,7 @@ module.exports.register = {
     name: joi.string().required(),
     password: joi.string().alphanum().min(3).max(30)
       .required(),
-    designation: joi.string().required(),
+    designation: joi.string(),
     is_admin: joi.boolean(),
     is_premium: joi.boolean()
   },

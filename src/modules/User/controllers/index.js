@@ -39,6 +39,7 @@ module.exports.register = async (req, res) => {
       user.designation = designation;
       (!is_admin) ? user.is_admin = false: user.is_admin = true;
       (!is_premium) ? user.is_premium = false: user.is_premium = true;
+      user.image = "https://res.cloudinary.com/ephaig/image/upload/v1555015808/download.png";
       user.save();
       const token = user.generateJWT();
       sendJSONResponse(
@@ -58,7 +59,7 @@ module.exports.register = async (req, res) => {
     }
   });
 };
-
+ 
 /**
    * Update User Profile
    * @param {object} req - Request object
@@ -67,7 +68,13 @@ module.exports.register = async (req, res) => {
    */
 module.exports.update = async (req, res) => {
   const { name, email, password, is_admin, is_premium } = req.body;
-  User.findById(req.params.userId, (err, user) => {
+  const { userId } = req.params;
+
+  if (!userId.match(/^[0-9a-fA-F]{24}$/)) {
+    return sendJSONResponse(res, 400, null, req.method, 'Invalid User ID');
+  }
+
+  User.findById(userId, (err, user) => {
     if (err) {
       return sendJSONResponse(res, 409, null, req.method, "User not Found!");
     }
@@ -154,12 +161,12 @@ module.exports.login = async (req, res) => {
     }
     else{
       //User password is wrong
-      sendJSONResponse(res, 401, null, req.method, 'User Not Authenticated');
+      sendJSONResponse(res, 401, null, req.method, 'User details incorrect');
     }
 
   }else{
     //user Unauthorized
-    sendJSONResponse(res, 404, null, req.method, 'User Not Found');
+    sendJSONResponse(res, 404, null, req.method, 'User details incorrect');
   }
 };
 
@@ -170,25 +177,96 @@ module.exports.login = async (req, res) => {
    * @return {json} res.json
    */
 module.exports.view_profile = async (req, res) => {
-  const user = await User.findById({ _id: req.params.id });
-  if(user){
-    sendJSONResponse(
-      res, 
-      200, 
-      { 
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        admin: user.is_admin,
-        premium: user.is_premium
-       }, 
-       req.method, 
-       'View Profile'
-       );
+
+  const { id } = req.params;
+
+  if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+    return sendJSONResponse(res, 400, null, req.method, 'Invalid User ID');
   }
-  else{
-    sendJSONResponse(res, 404, null, req.method, 'User Not Found');
-  }
+
+  const user = await User.findOne({_id:id});
+
+  if (user === null) {
+      return sendJSONResponse(res, 404, null, req.method, 'User Not Found');
+    }
+
+  sendJSONResponse(
+    res, 
+    200, 
+    { 
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      admin: user.is_admin,
+      premium: user.is_premium,
+      image: user.image
+      }, 
+      req.method, 
+      'View Profile'
+      );
   
 };
+
+/**
+   * Get all User Profile
+   * @param {object} req - Request object
+   * @param {object} res - Response object
+   * @return {json} res.json
+   */
+  module.exports.allUsers = async (req, res) => {
+    const except = {
+      _v: false,
+      password: false,
+      salt: false,
+      hash: false, 
+    }
+    const user = await User.find({}, except);
+    
+
+    if(user){
+      sendJSONResponse(
+        res, 
+        200, 
+        user,
+        req.method, 
+        'All users',
+        );
+    }
+    else{
+      sendJSONResponse(res, 404, null, req.method, 'No user available');
+    }
+    
+  };
+
+  /**
+   * Delete User 
+   * @param {object} req - Request object
+   * @param {object} res - Response object
+   * @return {json} res.json
+   */
+  module.exports.deleteUser = async (req, res) => {
+    const { userId } = req.params;
+
+    
+    if (!userId.match(/^[0-9a-fA-F]{24}$/)) {
+      return sendJSONResponse(res, 400, null, req.method, 'Invalid User ID');
+    }
+
+    const user = await User.findById(userId);
+
+    if(user === null) {
+      return sendJSONResponse(res, 404, null, req.method, 'User Not Found');
+    }
+    
+      sendJSONResponse(
+        res, 
+        200, 
+        null, 
+         req.method, 
+         'User Deleted Successfully'
+         );
+};
+    
+ 
+
 

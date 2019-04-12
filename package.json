@@ -12,6 +12,7 @@
 		"chalk": "^2.3.2",
 		"cloudinary": "^1.14.0",
 		"cookie-parser": "^1.4.4",
+		"cors": "^2.8.5",
 		"debug": "^3.1.0",
 		"dotenv": "^5.0.1",
 		"express": "^4.16.3",
@@ -46,7 +47,8 @@
 		"dev": "./node_modules/.bin/cross-env NODE_ENV=development nodemon ./src/app.js",
 		"debug": "DEBUG=* node ./src/app.js",
 		"lint": "eslint src/**/*.js",
-		"lint:fix": "eslint src/**/*.js  --fix"
+		"lint:fix": "eslint src/**/*.js  --fix",
+		"start": "node ./src/app.js"
 	},
 	"repository": {
 		"type": "git",
