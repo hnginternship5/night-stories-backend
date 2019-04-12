@@ -7,14 +7,29 @@ require('chai/register-should');
 //USER TESTS
 const newUser = {
     name: 'Adesanya Adetomiwa',
-    email: 'pauloooo@gmail.com',
+    email: 'marrk@gmail.com',
     designation: 'blah blah',
     is_admin: 'true',
     is_premium: 'true',
     password: 'bluwaters'
 }
 const badUser = {
-    email: 'wizard@gmail.com',
+    email: 'wizardd@gmail.com',
+    designation: 'blah blah',
+    is_admin: 'true',
+    is_premium: 'true',
+    password: 'bluwaters'
+}
+const updateUser = {
+    name: 'Adesanya Adetomiwa',
+    email: 'update@gmail.com',
+    designation: 'blah blah',
+    is_admin: 'true',
+    is_premium: 'true',
+    password: 'bluwaters'
+}
+const badUpdateUser = {
+    email: 'john@gmail.com',
     designation: 'blah blah',
     is_admin: 'true',
     is_premium: 'true',
@@ -108,6 +123,50 @@ describe('Login User', () => {
           .send(notRegistered)
           .end((err, res) => {
               res.should.have.property('status', 404);
+            done();
+          });
+    });
+});
+
+//Get User by Id
+describe('it should get a single user', () => {
+    it('should get user by id', (done) => {
+        const id = '5caf49083b8a0b067cd5d9b0';
+        chai
+          .request(app)
+          .get(`/api/v1/user/profile/${id}`)
+          .end((err, res) => {
+              res.should.have.property('status', 200);
+              res.body.data.should.have.property('id');
+              res.body.data.should.have.property('name');
+              res.body.data.should.have.property('email');
+              res.body.data.should.have.property('admin');
+              res.body.data.should.have.property('premium');
+            done();
+
+          });
+    });
+    it('should not get a user with no id', (done) => {
+        const id = '100000000';
+        chai
+          .request(app)
+          .get(`/api/v1/user/profile/${id}`)
+          .end((err, res) => {
+              res.should.have.property('status', 500);
+            done();
+          });
+          
+    });
+});
+describe('It should update a user',() => {
+    it('should update with no id', (done) => {
+        const id = '10000000000000000';
+        chai
+          .request(app)
+          .put(`/api/v1/user/edit/${id}`)
+          .send(updateUser)
+          .end((err, res) => {
+              res.should.have.property('status', 400);
             done();
           });
     });
