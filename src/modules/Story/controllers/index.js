@@ -87,7 +87,21 @@ module.exports.viewSingleStory = async (req, res) => {
    */
 module.exports.create = async (req, res) => {
   const { title, story, category } = req.body;
+  if (!title) {
+    return sendJSONResponse(res, 400, null, req.method, 'Title cannot be empty or undefined');
+  }
 
+  if (!story) {
+    return sendJSONResponse(res, 400, null, req.method, 'Story cannot be empty or undefined');
+  }
+
+  if (!category) {
+    return sendJSONResponse(res, 400, null, req.method, 'Category cannot be empty or undefined');
+  }
+
+  if (!req.files[0]) {
+    return sendJSONResponse(res, 400, null, req.method, 'Image cannot be empty or undefined');
+  }
   // check if category is a available one
   const catResult = await Category.findOne({ name: category });
   if (!catResult) {
@@ -103,15 +117,17 @@ module.exports.create = async (req, res) => {
   storyModel.designation = author._id;
 
   //if user adds an image
-  if (req.file) {
+  if (req.files[0]) {
+    console.log(req.files[0]);
     try {
-      const result = cloudinary.uploader.upload(req.file.path);
+      const result = await cloudinary.uploader.upload(req.files[0].path);
       const imageId = result.public_id;
       const image = result.secure_url;
       storyModel.imageId = imageId;
       storyModel.image = image;
 
     } catch (errs) {
+      console.log(errs,1);
       return sendJSONResponse(res, 400, null, req.method, "Error Adding Image");
     }
   }
