@@ -77,7 +77,7 @@ router.post(
                 user,
                 story,
               }))
-              .catch((err) => {
+              .catch(() => {
                 res.status(404)
                   .json({ postnotfound: 'No post found' });
               // Error cached above
@@ -103,13 +103,13 @@ router.post(
               user,
               story,
             }))
-              .catch((err) => {
+              .catch(() => {
                 res.status(404).json({ storynotfound: 'No Story found' });
                 // Error cached above
               });
           }
         })
-        .catch((err) => {
+        .catch(() => {
           res.status(404).json({ storynotfound: 'No Story found' });
         // Error cached above
         });
@@ -157,7 +157,7 @@ router.post(
           // Save the story instance
           story.save().then(story => res.json({ story, user, justLiked: 'you just like the Story' }));
         })
-        .catch((err) => {
+        .catch(() => {
           res.status(404).json({ postnotfound: 'No post found' });
         // Error cached above
         });
@@ -217,12 +217,12 @@ router.post(
           story.likes.splice(removeIndexStory, 1);
 
           // Save the Story instance
-          story.save().then(story => res.json({
+          story.save().then(() => res.json({
             liked: false,
             notLiked: 'you have just dislike this story',
           }));
         })
-        .catch(err => res.status(404).json({ postnotfound: 'No post found' }));
+        .catch(() => res.status(404).json({ postnotfound: 'No post found' }));
       // error Cached above
     });
   },
@@ -240,7 +240,7 @@ router.post(
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
     // fquerying the user Db
-    User.findById(req.user.id).then((user) => {
+    User.findById(req.user.id).then(() => {
       // querying the Story db for a single story instance
       Story.findById(req.params.id)
         .then((story) => {
@@ -263,7 +263,7 @@ router.post(
           // Save the User instance
           story.save().then(post => res.json({ post, liked: true, status: 'you just like this story' }));
         })
-        .catch((err) => {
+        .catch(() => {
           res.status(404).json({ postnotfound: 'No post found' });
         // If any error Cache it
         });
@@ -280,7 +280,7 @@ router.post(
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
     //   // Querying the user Db for a single user instance
-    User.findOne({ user: req.user.id }).then((user) => {
+    User.findOne({ user: req.user.id }).then(() => {
     //     // Querying the Story Db for a single story instance
       Story.findById(req.params.id)
         .then((story) => {
@@ -312,7 +312,7 @@ router.post(
               post,
               liked: false,
             }))
-            .catch(err => res.status(404).json({ status: 'No post found' }));
+            .catch(() => res.status(404).json({ status: 'No post found' }));
         });
     });
   },
@@ -332,7 +332,7 @@ router.post(
     User.findById(req.user.id).then((user) => {
       // querying the Story db for a single story instance
       Story.findById(req.params.id)
-        .then((story) => {
+        .then(() => {
           // checking to see wheter story have been bookmarked
           if (
             user.bookmarks.filter(bookmark => bookmark.story.toString() === req.params.id)
@@ -367,7 +367,7 @@ router.post(
             }));
           }
         })
-        .catch((err) => {
+        .catch(() => {
           res.status(404).json({ postnotfound: 'No post found' });
         // If any error Cache it
         });
