@@ -4,7 +4,7 @@ module.exports.create = {
   body: {
     title: joi.string().required(),
     story: joi.string().required(),
-    image: joi.string(),
+    image: joi.string().required(),
     category: joi.string().required()
   },
 };
