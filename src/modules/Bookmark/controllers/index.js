@@ -12,7 +12,7 @@ module.exports.getBookmark = async (req, res) => {
       200,
       Error({ status: 422 }),
       req.method,
-      "Invalid Bookmark Id"
+      'Invalid Bookmark Id',
     );
   } else {
     // if it is, return the user's bookmark and populate it with stories
