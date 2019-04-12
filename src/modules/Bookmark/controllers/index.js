@@ -7,7 +7,13 @@ const Bookmark = mongoose.model('Bookmark');
 module.exports.getBookmark = async (req, res) => {
   // check if the passed user id is valid
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-    sendJSONResponse(res, 200, Error({ status: 422 }), req.method, 'Invalid User Id');
+    sendJSONResponse(
+      res,
+      200,
+      Error({ status: 422 }),
+      req.method,
+      "Invalid Bookmark Id"
+    );
   } else {
     // if it is, return the user's bookmark and populate it with stories
     const bookmark = await Bookmark.find({ user: req.params.id }).populate('story');
