@@ -141,7 +141,7 @@ module.exports.login = async (req, res) => {
   if(findUser){
     const verifyPassword = await bcrypt.compare(password, findUser.password);
   
-    const token = user.generateJWT(user._id, name, email, user.is_admin);
+    const token = user.generateJWT(findUser._id, findUser.name, findUser.email, findUser.is_admin);
 
     if(verifyPassword){
       sendJSONResponse(

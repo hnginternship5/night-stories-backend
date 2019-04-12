@@ -18,6 +18,16 @@ require('./models');
 if (config.env !== 'test') {
   app.use(morgan('dev'));
 }
+// if(config.env === 'production') {
+//   store = createStore(rootReducer, initialState, compose(
+//       applyMiddleware(...middleware)
+//   ));
+// } else {
+//   store = createStore(rootReducer, initialState, compose(
+//       applyMiddleware(...middleware),
+//       window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+//   ));
+// }
 app.use(bodyParser.json({ limit: '52428800' }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());

@@ -185,10 +185,8 @@ module.exports.create = async (req, res) => {
 
     //check if user is admin
     const user = await decodeToken(req, res);
-    console.log(user)
-    const isAdmin = await User.findById(user._id);
-    console.log(isAdmin)
-    if(req.id !== findStory.designation && isAdmin.is_admin !== true){
+
+    if(req.id !== findStory.designation && user.admin !== true){
       return sendJSONResponse(res, 401, null, req.method, "Unauthorized User");
     }
 
@@ -296,6 +294,13 @@ module.exports.deleteStory = async (req, res) => {
 
   if (!story) {
     return sendJSONResponse(res, 404, null, req.method, 'story does not exist');
+  }
+
+  //check if user is admin
+  const user = await decodeToken(req, res);
+
+  if(user._id !== findStory.designation && user.admin !== true){
+    return sendJSONResponse(res, 401, null, req.method, "Unauthorized User");
   }
         
           

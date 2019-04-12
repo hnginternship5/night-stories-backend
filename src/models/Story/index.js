@@ -20,6 +20,9 @@ const storySchema = new Schema({
     type: String,
     required: true,
   },
+  author: {
+    type:String,
+  },
   image: {
     type: String,
   },
