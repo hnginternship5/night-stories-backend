@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+
 const Schema = mongoose.Schema;
 
 const categorySchema = new mongoose.Schema({
@@ -9,10 +10,10 @@ const categorySchema = new mongoose.Schema({
   },
 
   stories: [
-    { 
-      type: Schema.Types.ObjectId, 
-      ref: 'Story' 
-    }
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Story',
+    },
   ],
 
   timestamp: {

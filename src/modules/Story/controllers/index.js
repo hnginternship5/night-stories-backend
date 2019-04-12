@@ -20,12 +20,9 @@ cloudinary.config({
    * @return {json} res.json
    */
 module.exports.viewStories = async (req, res) => {
-  const stories = await Story.find({}).populate('cat_id','name');
+  const stories = await Story.find({}).populate('cat_id', 'name');
 
-  if(stories)
-    sendJSONResponse(res, 200, { stories }, req.method, 'Stories Fetched');
-  else
-  return sendJSONResponse(res, 500, null, req.method, 'Stories Could Not Be Fetched');  
+  if (stories) { sendJSONResponse(res, 200, { stories }, req.method, 'Stories Fetched'); } else { return sendJSONResponse(res, 500, null, req.method, 'Stories Could Not Be Fetched'); }
 };
 
 /**
@@ -34,36 +31,32 @@ module.exports.viewStories = async (req, res) => {
    * @param {object} res - Response object
    * @return {json} res.json
    */
-  module.exports.viewStoriesByCategory = async (req, res) => {
-    const { catId } = req.params;
+module.exports.viewStoriesByCategory = async (req, res) => {
+  const { catId } = req.params;
 
-    if (!catId.match(/^[0-9a-fA-F]{24}$/)) {
-      return sendJSONResponse(res, 400, null, req.method, 'Invalid Category ID');
+  if (!catId.match(/^[0-9a-fA-F]{24}$/)) {
+    return sendJSONResponse(res, 400, null, req.method, 'Invalid Category ID');
+  }
+
+  const findCat = await Category.findOne({ _id: catId });
+
+  // Check if category exists
+  if (findCat) {
+    const stories = findCat.stories;
+
+    const storyArray = [];
+    for (let i = 0; i < stories.length; i++) {
+      const story = stories[i];
+      const st = await Story.findOne(story);
+      storyArray.push(st);
     }
 
-    const findCat = await Category.findOne({_id:catId});
+    if (stories.length > 0) { return sendJSONResponse(res, 200, { storyArray }, req.method, 'Stories Grouped By Category Fetched'); }
+    return sendJSONResponse(res, 404, null, req.method, 'Stories Could Not Be Fetched');
+  }
 
-    //Check if category exists
-    if(findCat){
-      const stories = findCat.stories;
-
-      const storyArray = [];
-      for (let i = 0; i < stories.length; i++) {
-        const story = stories[i];
-        const st = await Story.findOne(story);
-        storyArray.push(st);
-      }
-      
-      if(stories.length > 0)
-        return sendJSONResponse(res, 200, { storyArray }, req.method, `Stories Grouped By Category Fetched`);
-      else
-        return sendJSONResponse(res, 404, null, req.method, 'Stories Could Not Be Fetched');  
-    }
-    else{
-      return sendJSONResponse(res, 400, null, req.method, 'Invalid category');
-    }
-    
-  };
+  return sendJSONResponse(res, 400, null, req.method, 'Invalid category');
+};
 
 /**
    * View Single Story
@@ -80,19 +73,18 @@ module.exports.viewSingleStory = async (req, res) => {
 
   const story = await Story.findById(id);
   if (!story) {
-    return sendJSONResponse(res, 404, null, req.method, "Story Is Not Available!");
+    return sendJSONResponse(res, 404, null, req.method, 'Story Is Not Available!');
   }
 
-  //console.log(story.designation)
-    // for (let i = 0; i < story.length; i++) {
-    //   const st = await User.findOne(story.designation);
-    //   console.log(story);
-    // }
-    const user = User.findOne({_id:story.designation});
-    console.log(user)
-    //if(user) const author = user.name;
-    return sendJSONResponse(res, 200, { story }, req.method, 'Story Fetched');
-  
+  // console.log(story.designation)
+  // for (let i = 0; i < story.length; i++) {
+  //   const st = await User.findOne(story.designation);
+  //   console.log(story);
+  // }
+  const user = User.findOne({ _id: story.designation });
+  console.log(user);
+  // if(user) const author = user.name;
+  return sendJSONResponse(res, 200, { story }, req.method, 'Story Fetched');
 };
 
 /**
@@ -121,7 +113,7 @@ module.exports.create = async (req, res) => {
     return sendJSONResponse(res, 400, null, req.method, 'Invalid category');
   }
 
-  //If category exists
+  // If category exists
   const storyModel = new Story();
   storyModel.title = title;
   storyModel.story = story;
@@ -131,7 +123,7 @@ module.exports.create = async (req, res) => {
   storyModel.designation = author._id;
   storyModel.author = author.name;
 
-  //if user adds an image
+  // if user adds an image
   if (req.files[0]) {
     try {
       const result = await cloudinary.uploader.upload(req.files[0].path);
@@ -139,19 +131,18 @@ module.exports.create = async (req, res) => {
       const image = result.secure_url;
       storyModel.imageId = imageId;
       storyModel.image = image;
-
     } catch (errs) {
-      return sendJSONResponse(res, 400, null, req.method, "Error Adding Image");
+      return sendJSONResponse(res, 400, null, req.method, 'Error Adding Image');
     }
-  }else{
-    storyModel.image = "https://res.cloudinary.com/ephaig/image/upload/v1555067803/top-best-storybook-apps-for-kids-i-love-you-all-the-time-3.jpg";
+  } else {
+    storyModel.image = 'https://res.cloudinary.com/ephaig/image/upload/v1555067803/top-best-storybook-apps-for-kids-i-love-you-all-the-time-3.jpg';
   }
-  //save story to db
+  // save story to db
   await storyModel.save();
-  //store story id in category
+  // store story id in category
   catResult.stories.push(storyModel._id);
   catResult.save();
-  sendJSONResponse(res, 201, {storyModel}, req.method, 'Created New Story!');
+  sendJSONResponse(res, 201, { storyModel }, req.method, 'Created New Story!');
 };
 
 /**
@@ -160,62 +151,61 @@ module.exports.create = async (req, res) => {
    * @param {object} res - Response object
    * @return {json} res.json
    */
-  module.exports.update = async (req, res) => {
-    const { title, story, category } = req.body;
-    const { storyId } = req.params;
+module.exports.update = async (req, res) => {
+  const { title, story, category } = req.body;
+  const { storyId } = req.params;
 
-    if (!storyId.match(/^[0-9a-fA-F]{24}$/)) {
-      return sendJSONResponse(res, 400, null, req.method, 'Invalid Story ID');
+  if (!storyId.match(/^[0-9a-fA-F]{24}$/)) {
+    return sendJSONResponse(res, 400, null, req.method, 'Invalid Story ID');
+  }
+
+  // check if category is a available one
+  if (category) {
+    const catResult = await Category.findOne({ name: category });
+
+    // check if category still exists or has been changed
+    if (!catResult) {
+      return sendJSONResponse(res, 400, null, req.method, 'Category Cannot Be Found');
     }
-  
-    // check if category is a available one
-    if(category){
-      const catResult = await Category.findOne({ name: category });
+  }
 
-      //check if category still exists or has been changed
-      if (!catResult) {
-        return sendJSONResponse(res, 400, null, req.method, 'Category Cannot Be Found');
+
+  // If category exists
+  const findStory = await Story.findById(storyId);
+
+  // check if user is admin
+  const user = await decodeToken(req, res);
+
+  if (user._id !== findStory.designation && user.admin !== true) {
+    return sendJSONResponse(res, 401, null, req.method, 'Unauthorized User');
+  }
+
+  // if story exists
+  if (findStory) {
+    const storyModel = new Story();
+    storyModel.title = title;
+    storyModel.story = story;
+    storyModel.cat_id = catResult._id;
+    storyModel.designation = user._id;
+
+    // if user adds an image
+    if (req.file) {
+      try {
+        const result = cloudinary.uploader.upload(req.file.path);
+        const imageId = result.public_id;
+        const image = result.secure_url;
+        storyModel.imageId = imageId;
+        storyModel.image = image;
+      } catch (errs) {
+        return sendJSONResponse(res, 400, null, req.method, 'Error Adding Image');
       }
     }
-      
-  
-    //If category exists
-    const findStory = await Story.findById(storyId);
-
-    //check if user is admin
-    const user = await decodeToken(req, res);
-
-    if(user._id !== findStory.designation && user.admin !== true){
-      return sendJSONResponse(res, 401, null, req.method, "Unauthorized User");
-    }
-
-    //if story exists
-    if(findStory){
-      const storyModel = new Story();
-      storyModel.title = title;
-      storyModel.story = story;
-      storyModel.cat_id = catResult._id;
-      storyModel.designation = user._id;
-    
-      //if user adds an image
-      if (req.file) {
-        try {
-          const result = cloudinary.uploader.upload(req.file.path);
-          const imageId = result.public_id;
-          const image = result.secure_url;
-          storyModel.imageId = imageId;
-          storyModel.image = image;
-    
-        } catch (errs) {
-          return sendJSONResponse(res, 400, null, req.method, "Error Adding Image");
-        }
-      }
-      await storyModel.save();
-      sendJSONResponse(res, 201, {storyModel}, req.method, 'Story Updated!');
-    }else{
-      return sendJSONResponse(res, 400, null, req.method, 'Story Is Not Available'); 
-    }
-  };
+    await storyModel.save();
+    sendJSONResponse(res, 201, { storyModel }, req.method, 'Story Updated!');
+  } else {
+    return sendJSONResponse(res, 400, null, req.method, 'Story Is Not Available');
+  }
+};
 
 /**
    * Like  Story
@@ -225,28 +215,28 @@ module.exports.create = async (req, res) => {
    */
 module.exports.likeStory = async (req, res) => {
   const { storyId } = req.params;
-  const user = decodeToken(req,res)._id;
+  const user = decodeToken(req, res)._id;
 
   if (!storyId.match(/^[0-9a-fA-F]{24}$/)) {
     return sendJSONResponse(res, 400, null, req.method, 'Invalid Story ID');
   }
-      
+
   // Checking whether the story to be liked exist in the DB
   const story = await Story.findById(storyId);
 
   if (!story) {
     return sendJSONResponse(res, 404, null, req.method, 'invalid story id');
   }
-        
+
   // Checking wheter the post have been liked or not
   if (story.likes.filter(like => like.user.toString() === user).length > 0) {
-    return sendJSONResponse(res, 400, null, req.method, 'You have like this story already'); 
-  } 
-          
+    return sendJSONResponse(res, 400, null, req.method, 'You have like this story already');
+  }
+
   // like story
   const test = await Story.update(
-    {_id: storyId},
-    {$push: {likes: {user}} }
+    { _id: storyId },
+    { $push: { likes: { user } } },
   );
 
   return sendJSONResponse(res, 200, null, req.method, 'Story Liked');
@@ -254,28 +244,28 @@ module.exports.likeStory = async (req, res) => {
 
 module.exports.disLikeStory = async (req, res) => {
   const { storyId } = req.params;
-  const user = decodeToken(req,res)._id;
+  const user = decodeToken(req, res)._id;
 
   if (!storyId.match(/^[0-9a-fA-F]{24}$/)) {
     return sendJSONResponse(res, 400, null, req.method, 'Invalid Story ID');
   }
-      
+
   // Checking whether the story to be liked exist in the DB
   const story = await Story.findById(storyId);
 
   if (!story) {
     return sendJSONResponse(res, 404, null, req.method, 'invalid story id');
   }
-        
+
   // Checking wheter the post have been liked or not
   if (story.likes.filter(like => like.user.toString() === user).length === 0) {
-    return sendJSONResponse(res, 400, null, req.method, 'You have not like this story yet'); 
-  } 
-          
+    return sendJSONResponse(res, 400, null, req.method, 'You have not like this story yet');
+  }
+
   // like story
   await Story.update(
-    {_id: storyId},
-    {$pull: {likes: {user}} }
+    { _id: storyId },
+    { $pull: { likes: { user } } },
   );
 
   return sendJSONResponse(res, 200, null, req.method, 'Story Disliked');
@@ -287,7 +277,7 @@ module.exports.deleteStory = async (req, res) => {
   if (!storyId.match(/^[0-9a-fA-F]{24}$/)) {
     return sendJSONResponse(res, 400, null, req.method, 'Invalid Story ID');
   }
-      
+
   // Checking whether the story to be deleted exist in the DB
   const story = await Story.findById(storyId);
 
@@ -295,16 +285,21 @@ module.exports.deleteStory = async (req, res) => {
     return sendJSONResponse(res, 404, null, req.method, 'story does not exist');
   }
 
-  //check if user is admin
+  // check if user is admin or logged in
   const user = await decodeToken(req, res);
 
-  if(user._id !== findStory.designation && user.admin !== true){
-    return sendJSONResponse(res, 401, null, req.method, "Unauthorized User");
+  if (user._id !== story.designation && user.admin !== true) {
+    return sendJSONResponse(res, 401, null, req.method, 'Unauthorized User');
   }
-        
-          
-  // delete story
-  await Story.findOneAndRemove({_id: storyId});
 
-  return sendJSONResponse(res, 204, null, req.method, 'Story Deleted');
+
+  // delete story
+  await Story.findOneAndRemove({ _id: storyId });
+
+  const except = {
+    _v: false
+  };
+  const reloadStories = await User.find({}, except);
+
+  return sendJSONResponse(res, 200, { reloadStories }, req.method, 'Story Deleted');
 };

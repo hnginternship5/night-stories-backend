@@ -22,22 +22,22 @@ module.exports = {
   // check if token is valid,
   verifyToken(req, res, next) {
     const { authorization } = req.headers;
-    const {userId} = req.params;
+    const { userId } = req.params;
 
     try {
       const decoded = jwt.verify(authorization, jwtsecret);
-      
-      if(decoded.id === userId ){
+
+      if (decoded.id === userId) {
         req.id = decoded.id;
         return next();
-      }else{
-        return res.status(401).json({
-          status: 401,
-          method: req.method,
-          message: 'Unauthorized User',
-          data: null,
-        });
       }
+      return res.status(401).json({
+        status: 401,
+        method: req.method,
+        message: 'Unauthorized User',
+        data: null,
+      });
+
       //
     } catch (e) {
       return res.status(400).json({
@@ -53,7 +53,7 @@ module.exports = {
   // passing an empty token to jwt throws errors
   checkTokenExists(req, res, next) {
     const { authorization } = req.headers;
-    
+
     if (!authorization) {
       return res.status(400).json({
         status: 400,
@@ -66,9 +66,9 @@ module.exports = {
     return next();
   },
 
-  //decode token
-  decodeToken(req, res){
-    const { authorization } = req.headers
+  // decode token
+  decodeToken(req, res) {
+    const { authorization } = req.headers;
     return jwt.decode(authorization);
   },
 
@@ -80,13 +80,12 @@ module.exports = {
     if (decoded.admin) {
       return next();
     }
-    else{
-      return res.status(401).json({
-        status: 401,
-        method: req.method,
-        message: 'Only Admin Access',
-        data: null,
-      })
-    }
-  }
+
+    return res.status(401).json({
+      status: 401,
+      method: req.method,
+      message: 'Only Admin Access',
+      data: null,
+    });
+  },
 };

@@ -5,7 +5,7 @@ module.exports.create = {
     title: joi.string().required(),
     story: joi.string().required(),
     image: joi.string().required(),
-    category: joi.string().required()
+    category: joi.string().required(),
   },
 };
 
@@ -14,7 +14,7 @@ module.exports.update = {
     title: joi.string(),
     story: joi.string(),
     image: joi.string(),
-    category: joi.string()
+    category: joi.string(),
   },
 };
 

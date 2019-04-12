@@ -111,33 +111,33 @@ module.exports.getAll = async (req, res) => {
    * @param {object} res - Response object
    * @return {json} res.json
    */
-  module.exports.getSingleCategory = async (req, res) => {
-    const { id } = req.params;
+module.exports.getSingleCategory = async (req, res) => {
+  const { id } = req.params;
 
-    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
-      return sendJSONResponse(res, 400, null, req.method, 'Invalid Category ID');
-    }
+  if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+    return sendJSONResponse(res, 400, null, req.method, 'Invalid Category ID');
+  }
 
-    const category = await Category.findById(id);
-  
-    if (category) {
-      return sendJSONResponse(
-        res,
-        200,
-        category,
-        req.method,
-        'Category has been selected!',
-      );
-    }
-  
+  const category = await Category.findById(id);
+
+  if (category) {
     return sendJSONResponse(
       res,
-      404,
-      null,
+      200,
+      category,
       req.method,
-      'Category Does Not Exist',
+      'Category has been selected!',
     );
-  };
+  }
+
+  return sendJSONResponse(
+    res,
+    404,
+    null,
+    req.method,
+    'Category Does Not Exist',
+  );
+};
 
 module.exports.delete = async (req, res) => {
   const { catId } = req.params;
