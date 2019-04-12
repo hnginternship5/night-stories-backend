@@ -16,7 +16,7 @@ const storage = multer.diskStorage({
       return cb(new Error('Only image files are allowed!'), false);
     }
     return cb(null, true);
-  };
+  }; 
   const upload = multer({ storage, fileFilter: imageFilter });
 
 

@@ -41,7 +41,7 @@ module.exports.viewStories = async (req, res) => {
       return sendJSONResponse(res, 400, null, req.method, 'Invalid Category ID');
     }
 
-    const findCat = await Category.findOne({name:catId});
+    const findCat = await Category.findOne({_id:catId});
 
     //Check if category exists
     if(findCat){
@@ -54,10 +54,10 @@ module.exports.viewStories = async (req, res) => {
         storyArray.push(st);
       }
       
-      if(stories)
+      if(stories.length > 0)
         return sendJSONResponse(res, 200, { storyArray }, req.method, `Stories Grouped By Category Fetched`);
       else
-        return sendJSONResponse(res, 500, null, req.method, 'Stories Could Not Be Fetched');  
+        return sendJSONResponse(res, 404, null, req.method, 'Stories Could Not Be Fetched');  
     }
     else{
       return sendJSONResponse(res, 400, null, req.method, 'Invalid category');
@@ -78,13 +78,21 @@ module.exports.viewSingleStory = async (req, res) => {
     return sendJSONResponse(res, 400, null, req.method, 'Invalid Story ID');
   }
 
-  Story.findById(id, (err, story) => {
-    if (err) {
-      return sendJSONResponse(res, 409, null, req.method, "Story Is Not Available!");
-    }
+  const story = await Story.findById(id);
+  if (!story) {
+    return sendJSONResponse(res, 404, null, req.method, "Story Is Not Available!");
+  }
 
+  //console.log(story.designation)
+    // for (let i = 0; i < story.length; i++) {
+    //   const st = await User.findOne(story.designation);
+    //   console.log(story);
+    // }
+    const user = User.findOne({_id:story.designation});
+    console.log(user)
+    //if(user) const author = user.name;
     return sendJSONResponse(res, 200, { story }, req.method, 'Story Fetched');
-  });
+  
 };
 
 /**
@@ -108,6 +116,9 @@ module.exports.create = async (req, res) => {
   storyModel.story = story;
   storyModel.cat_id = catResult._id;
   const author = decodeToken(req, res);
+  const us = User.findById(author._id);
+
+  console.log(us)
   storyModel.designation = author._id;
 
   //if user adds an image

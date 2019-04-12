@@ -58,7 +58,7 @@ module.exports.update = async (req, res) => {
   // Check if category exists
   Category.findById(catId, (err, category) => {
     if (err) {
-      return sendJSONResponse(res, 409, null, req.method, 'Category not Found!');
+      return sendJSONResponse(res, 404, null, req.method, 'Category not Found!');
     }
     if (name) {
       category.name = name;
@@ -92,20 +92,52 @@ module.exports.getAll = async (req, res) => {
       200,
       category,
       req.method,
-      ' All Categories sent Succesfully!',
+      'All Categories sent Succesfully!',
     );
   }
 
   return sendJSONResponse(
     res,
-    200,
-    {
-      category,
-    },
+    404,
+    null,
     req.method,
     'No category available',
   );
 };
+
+/**
+   * Get single category
+   * @param {object} req - Request object
+   * @param {object} res - Response object
+   * @return {json} res.json
+   */
+  module.exports.getSingleCategory = async (req, res) => {
+    const { id } = req.params;
+
+    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+      return sendJSONResponse(res, 400, null, req.method, 'Invalid Category ID');
+    }
+
+    const category = await Category.findById(id);
+  
+    if (category) {
+      return sendJSONResponse(
+        res,
+        200,
+        category,
+        req.method,
+        'Category has been selected!',
+      );
+    }
+  
+    return sendJSONResponse(
+      res,
+      404,
+      null,
+      req.method,
+      'Category Does Not Exist',
+    );
+  };
 
 module.exports.delete = async (req, res) => {
   const { catId } = req.params;
@@ -121,7 +153,7 @@ module.exports.delete = async (req, res) => {
   if (!findCat) {
     return sendJSONResponse(
       res,
-      409,
+      404,
       null,
       req.method,
       'Category Does Not Exists!',
@@ -132,7 +164,7 @@ module.exports.delete = async (req, res) => {
   if (findStory.length > 0) {
     return sendJSONResponse(
       res,
-      400,
+      409,
       {},
       req.method,
       'Cannot Delete Category Because Stories Exists Under It',
