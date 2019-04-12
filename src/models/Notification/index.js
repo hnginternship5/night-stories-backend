@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const notificationSchema = new mongoose.Schema({
   notification_message: String,
@@ -7,10 +7,10 @@ const notificationSchema = new mongoose.Schema({
 
   timestamp: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
-const Notification = mongoose.model("Notification", notificationSchema);
+const Notification = mongoose.model('Notification', notificationSchema);
 
 module.exports = Notification;

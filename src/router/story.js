@@ -18,14 +18,13 @@ router.post(
   '/create',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
-   
     const newStory = new Story({
       story_title: req.body.title,
       story_description: req.body.description,
       user: req.user.id,
       designation: req.body.designation,
     });
- 
+
     // Story Been saved to the Story DB
     newStory.save().then(story => res.json(story));
   },
@@ -310,9 +309,9 @@ router.post(
           //         // Save
           story.save().then(post => res
             .json({
- post,
-              liked: false 
-}))
+              post,
+              liked: false,
+            }))
             .catch(err => res.status(404).json({ status: 'No post found' }));
         });
     });

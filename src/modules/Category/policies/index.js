@@ -2,7 +2,7 @@ const joi = require('joi');
 
 module.exports.create = {
   body: {
-    name: joi.string().required()
+    name: joi.string().required(),
   },
 };
 
@@ -12,8 +12,4 @@ module.exports.update = {
     name: joi.string().required(),
   },
 };
-
-
-
-
 
