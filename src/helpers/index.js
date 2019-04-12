@@ -67,7 +67,7 @@ module.exports = {
   },
 
   // decode token
-  decodeToken(req, res) {
+  decodeToken(req) {
     const { authorization } = req.headers;
     return jwt.decode(authorization);
   },
