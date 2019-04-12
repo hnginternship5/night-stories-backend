@@ -115,9 +115,6 @@ module.exports.create = async (req, res) => {
     return sendJSONResponse(res, 400, null, req.method, 'Category cannot be empty or undefined');
   }
 
-  if (!req.files[0]) {
-    return sendJSONResponse(res, 400, null, req.method, 'Image cannot be empty or undefined');
-  }
   // check if category is a available one
   const catResult = await Category.findOne({ name: category });
   if (!catResult) {
@@ -131,7 +128,8 @@ module.exports.create = async (req, res) => {
   storyModel.cat_id = catResult._id;
   const author = decodeToken(req, res);
 
-  storyModel.designation = author.name;
+  storyModel.designation = author._id;
+  storyModel.author = author.name;
 
   //if user adds an image
   if (req.files[0]) {
@@ -143,9 +141,10 @@ module.exports.create = async (req, res) => {
       storyModel.image = image;
 
     } catch (errs) {
-      console.log(errs,1);
       return sendJSONResponse(res, 400, null, req.method, "Error Adding Image");
     }
+  }else{
+    storyModel.image = "https://res.cloudinary.com/ephaig/image/upload/v1555067803/top-best-storybook-apps-for-kids-i-love-you-all-the-time-3.jpg";
   }
   //save story to db
   await storyModel.save();
@@ -186,7 +185,7 @@ module.exports.create = async (req, res) => {
     //check if user is admin
     const user = await decodeToken(req, res);
 
-    if(req.id !== findStory.designation && user.admin !== true){
+    if(user._id !== findStory.designation && user.admin !== true){
       return sendJSONResponse(res, 401, null, req.method, "Unauthorized User");
     }
 
@@ -196,7 +195,7 @@ module.exports.create = async (req, res) => {
       storyModel.title = title;
       storyModel.story = story;
       storyModel.cat_id = catResult._id;
-      storyModel.designation = req.id;
+      storyModel.designation = user._id;
     
       //if user adds an image
       if (req.file) {

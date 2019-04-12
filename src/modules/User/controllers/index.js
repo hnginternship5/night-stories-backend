@@ -260,11 +260,19 @@ module.exports.view_profile = async (req, res) => {
     
     // delete user
     await User.findOneAndRemove({_id: userId});
+
+    const except = {
+      _v: false,
+      password: false,
+      salt: false,
+      hash: false, 
+    }
+    const reloadUser = await User.find({}, except);
       
     sendJSONResponse(
         res, 
         200, 
-        null, 
+        { reloadUser }, 
          req.method, 
          'User Deleted Successfully'
          );
