@@ -103,7 +103,21 @@ module.exports.viewSingleStory = async (req, res) => {
    */
 module.exports.create = async (req, res) => {
   const { title, story, category } = req.body;
+  if (!title) {
+    return sendJSONResponse(res, 400, null, req.method, 'Title cannot be empty or undefined');
+  }
 
+  if (!story) {
+    return sendJSONResponse(res, 400, null, req.method, 'Story cannot be empty or undefined');
+  }
+
+  if (!category) {
+    return sendJSONResponse(res, 400, null, req.method, 'Category cannot be empty or undefined');
+  }
+
+  if (!req.files[0]) {
+    return sendJSONResponse(res, 400, null, req.method, 'Image cannot be empty or undefined');
+  }
   // check if category is a available one
   const catResult = await Category.findOne({ name: category });
   if (!catResult) {
@@ -122,15 +136,17 @@ module.exports.create = async (req, res) => {
   storyModel.designation = author._id;
 
   //if user adds an image
-  if (req.file) {
+  if (req.files[0]) {
+    console.log(req.files[0]);
     try {
-      const result = cloudinary.uploader.upload(req.file.path);
+      const result = await cloudinary.uploader.upload(req.files[0].path);
       const imageId = result.public_id;
       const image = result.secure_url;
       storyModel.imageId = imageId;
       storyModel.image = image;
 
     } catch (errs) {
+      console.log(errs,1);
       return sendJSONResponse(res, 400, null, req.method, "Error Adding Image");
     }
   }
@@ -206,3 +222,76 @@ module.exports.create = async (req, res) => {
       return sendJSONResponse(res, 400, null, req.method, 'Story Is Not Available'); 
     }
   };
+
+/**
+   * Like  Story
+   * @param {object} req - Request object
+   * @param {object} res - Response object
+   * @return {json} res.json
+   */
+module.exports.likeStory = async (req, res) => {
+  const { storyId } = req.params;
+  const user = decodeToken(req,res)._id;
+      
+  // Checking whether the story to be liked exist in the DB
+  const story = await Story.findById(storyId);
+
+  if (!story) {
+    return sendJSONResponse(res, 400, null, req.method, 'invalid story id');
+  }
+        
+  // Checking wheter the post have been liked or not
+  if (story.likes.filter(like => like.user.toString() === user).length > 0) {
+    return sendJSONResponse(res, 400, null, req.method, 'You have like this story already'); 
+  } 
+          
+  // like story
+  const test = await Story.update(
+    {_id: storyId},
+    {$push: {likes: {user}} }
+  );
+
+  return sendJSONResponse(res, 200, null, req.method, 'Story Liked');
+};
+
+module.exports.disLikeStory = async (req, res) => {
+  const { storyId } = req.params;
+  const user = decodeToken(req,res)._id;
+      
+  // Checking whether the story to be liked exist in the DB
+  const story = await Story.findById(storyId);
+
+  if (!story) {
+    return sendJSONResponse(res, 400, null, req.method, 'invalid story id');
+  }
+        
+  // Checking wheter the post have been liked or not
+  if (story.likes.filter(like => like.user.toString() === user).length === 0) {
+    return sendJSONResponse(res, 400, null, req.method, 'You have not like this story yet'); 
+  } 
+          
+  // like story
+  await Story.update(
+    {_id: storyId},
+    {$pull: {likes: {user}} }
+  );
+
+  return sendJSONResponse(res, 200, null, req.method, 'Story Disliked');
+};
+
+module.exports.deleteStory = async (req, res) => {
+  const { storyId } = req.params;
+      
+  // Checking whether the story to be deleted exist in the DB
+  const story = await Story.findById(storyId);
+
+  if (!story) {
+    return sendJSONResponse(res, 404, null, req.method, 'story does not exist');
+  }
+        
+          
+  // delete story
+  await Story.findOneAndRemove({_id: storyId});
+
+  return sendJSONResponse(res, 204, null, req.method, 'Story Deleted');
+};
