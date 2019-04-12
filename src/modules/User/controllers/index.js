@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const { sendJSONResponse } = require('../../../helpers');
 
 const User = mongoose.model('User');
+const Bookmark = mongoose.model('Bookmark');
 
 const cloudinary = require('cloudinary').v2;
 // cloudinary Config
@@ -44,6 +45,8 @@ module.exports.register = async (req, res) => {
       user.image = 'https://res.cloudinary.com/ephaig/image/upload/v1555015808/download.png';
       user.save();
       const token = user.generateJWT(user._id, name, email, user.is_admin);
+      const numOfFav = 0;
+
       sendJSONResponse(
         res,
         200,
@@ -54,6 +57,7 @@ module.exports.register = async (req, res) => {
           email: user.email,
           admin: user.is_admin,
           premium: user.is_premium,
+          numOfFav
         },
         req.method,
         'Created New User!'
@@ -108,6 +112,11 @@ module.exports.update = async (req, res) => {
 
     (is_admin) ? user.is_admin = is_admin : null;
     (is_premium) ? user.is_premium = is_premium : null;
+    const bookmark = Bookmark.find({ user: user._id });
+    const numOfFav = 0;
+    if(bookmark !== null){
+      numOfFav = bookmark.length;
+    }
 
     user.save();
     sendJSONResponse(
@@ -120,6 +129,7 @@ module.exports.update = async (req, res) => {
         admin: user.is_admin,
         premium: user.is_premium,
         image: user.image,
+        numOfFav
       },
       req.method,
       'User Updated Succesfully!',
@@ -146,6 +156,7 @@ module.exports.login = async (req, res) => {
     const verifyPassword = await bcrypt.compare(password, findUser.password);
 
     const token = user.generateJWT(findUser._id, findUser.name, findUser.email, findUser.is_admin);
+    const bookmark = await Bookmark.find({ user: user._id });
 
     if (verifyPassword) {
       sendJSONResponse(
@@ -191,6 +202,7 @@ module.exports.view_profile = async (req, res) => {
     return sendJSONResponse(res, 404, null, req.method, 'User Not Found');
   }
 
+  console.log(user.bookmarks.length)
   sendJSONResponse(
     res,
     200,
@@ -202,6 +214,8 @@ module.exports.view_profile = async (req, res) => {
       premium: user.is_premium,
       image: user.image,
       imageId: user.imageId,
+      bookmark: user.bookmarks,
+      bookmark_count: user.bookmarks.length
     },
     req.method,
     'View Profile',
@@ -222,6 +236,7 @@ module.exports.allUsers = async (req, res) => {
     hash: false,
   };
   const user = await User.find({}, except);
+  console.log(user);
 
 
   if (user) {
