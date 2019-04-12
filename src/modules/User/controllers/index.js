@@ -41,7 +41,7 @@ module.exports.register = async (req, res) => {
       (!is_premium) ? user.is_premium = false: user.is_premium = true;
       user.image = "https://res.cloudinary.com/ephaig/image/upload/v1555015808/download.png";
       user.save();
-      const token = user.generateJWT();
+      const token = user.generateJWT(user._id, name, email, user.is_admin);
       sendJSONResponse(
         res,
         200,
@@ -141,7 +141,7 @@ module.exports.login = async (req, res) => {
   if(findUser){
     const verifyPassword = await bcrypt.compare(password, findUser.password);
   
-    const token = user.generateJWT();
+    const token = user.generateJWT(user._id, name, email, user.is_admin);
 
     if(verifyPassword){
       sendJSONResponse(
@@ -199,7 +199,8 @@ module.exports.view_profile = async (req, res) => {
       email: user.email,
       admin: user.is_admin,
       premium: user.is_premium,
-      image: user.image
+      image: user.image,
+      imageId: user.imageId
       }, 
       req.method, 
       'View Profile'
@@ -247,7 +248,6 @@ module.exports.view_profile = async (req, res) => {
   module.exports.deleteUser = async (req, res) => {
     const { userId } = req.params;
 
-    
     if (!userId.match(/^[0-9a-fA-F]{24}$/)) {
       return sendJSONResponse(res, 400, null, req.method, 'Invalid User ID');
     }
@@ -258,7 +258,10 @@ module.exports.view_profile = async (req, res) => {
       return sendJSONResponse(res, 404, null, req.method, 'User Not Found');
     }
     
-      sendJSONResponse(
+    // delete user
+    await User.findOneAndRemove({_id: userId});
+      
+    sendJSONResponse(
         res, 
         200, 
         null, 

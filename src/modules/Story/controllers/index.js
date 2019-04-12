@@ -130,14 +130,11 @@ module.exports.create = async (req, res) => {
   storyModel.story = story;
   storyModel.cat_id = catResult._id;
   const author = decodeToken(req, res);
-  const us = User.findById(author._id);
 
-  console.log(us)
-  storyModel.designation = author._id;
+  storyModel.designation = author.name;
 
   //if user adds an image
   if (req.files[0]) {
-    console.log(req.files[0]);
     try {
       const result = await cloudinary.uploader.upload(req.files[0].path);
       const imageId = result.public_id;
@@ -232,12 +229,16 @@ module.exports.create = async (req, res) => {
 module.exports.likeStory = async (req, res) => {
   const { storyId } = req.params;
   const user = decodeToken(req,res)._id;
+
+  if (!storyId.match(/^[0-9a-fA-F]{24}$/)) {
+    return sendJSONResponse(res, 400, null, req.method, 'Invalid Story ID');
+  }
       
   // Checking whether the story to be liked exist in the DB
   const story = await Story.findById(storyId);
 
   if (!story) {
-    return sendJSONResponse(res, 400, null, req.method, 'invalid story id');
+    return sendJSONResponse(res, 404, null, req.method, 'invalid story id');
   }
         
   // Checking wheter the post have been liked or not
@@ -257,12 +258,16 @@ module.exports.likeStory = async (req, res) => {
 module.exports.disLikeStory = async (req, res) => {
   const { storyId } = req.params;
   const user = decodeToken(req,res)._id;
+
+  if (!storyId.match(/^[0-9a-fA-F]{24}$/)) {
+    return sendJSONResponse(res, 400, null, req.method, 'Invalid Story ID');
+  }
       
   // Checking whether the story to be liked exist in the DB
   const story = await Story.findById(storyId);
 
   if (!story) {
-    return sendJSONResponse(res, 400, null, req.method, 'invalid story id');
+    return sendJSONResponse(res, 404, null, req.method, 'invalid story id');
   }
         
   // Checking wheter the post have been liked or not
@@ -281,6 +286,10 @@ module.exports.disLikeStory = async (req, res) => {
 
 module.exports.deleteStory = async (req, res) => {
   const { storyId } = req.params;
+
+  if (!storyId.match(/^[0-9a-fA-F]{24}$/)) {
+    return sendJSONResponse(res, 400, null, req.method, 'Invalid Story ID');
+  }
       
   // Checking whether the story to be deleted exist in the DB
   const story = await Story.findById(storyId);
