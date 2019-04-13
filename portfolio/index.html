@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset ="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="main.css">
+  <title>My Portfolio</title>
+
+
+</head>
+<body>
+  <aside>
+    <figure>
+      <div id="avatar"></div>
+      <figcaption>Bedtime Story App</figcaption>
+      <nav>
+        <ul>
+          <li><a href="#">HOME</a></li>
+          <li><a href="#">ABOUT US</a></li>
+          <li><a href="#">STORIES</a></li>
+          <li><a href="#">YOUR WORLD</a></li>
+
+        </ul>
+
+      </nav>
+    </figure>
+    <img src="images/iconfinder_menu_3324998.svg">
+  </aside>
+  <main>
+    <h1>Adam and the Dragon’s Treasure</h1>
+    <p>Language: English/Polish   Origin: Poland</p>
+
+    <p>Adam has always been fascinated by the stories he hears on the news, but
+        he never expected such thrilling stories to take place so close to home</p>
+    
+    <a href="#" class="cta">Read more</a>
+  </main>
+  <script>
+    (function() {
+      var menu = document.querySelector('ul'),
+        menulink = document.querySelector('img');
+
+      menulink.addEventListener('click', function(e) {
+        menu.classList.toggle('active');
+        e.preventDefault();
+
+      });
+    })();
+
+  </script>
+  
+
+</body>
+
+</html>
