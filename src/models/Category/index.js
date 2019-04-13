@@ -1,18 +1,20 @@
 const mongoose = require('mongoose');
 
+const Schema = mongoose.Schema;
+
 const categorySchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-  },
-  description: {
-    type: String,
-    required: true,
+    lowercase: true,
   },
 
-  image: String,
-
-  premium: Boolean,
+  stories: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Story',
+    },
+  ],
 
   timestamp: {
     type: Date,

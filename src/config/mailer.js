@@ -3,10 +3,10 @@ const pug = require('pug');
 const juice = require('juice');
 const htmlToText = require('html-to-text');
 const {
-  promisify
+  promisify,
 } = require('util');
 const {
-  mail
+  mail,
 } = require('./index');
 
 const transport = nodeMailer.createTransport({

@@ -1,6 +1,4 @@
 /* eslint-disable no-unused-vars */
-const Story = require('../Story/index.js');
-const User = require('../User/index.js');
 const mongoose = require('mongoose');
 
 const { Schema } = mongoose;

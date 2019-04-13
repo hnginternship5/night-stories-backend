@@ -50,13 +50,13 @@ const userSchema = new Schema({
 
 }, { timestamps: true });
 
-userSchema.methods.generateJWT = function generate() {
+userSchema.methods.generateJWT = function generate(_id, name, email, admin) {
   return sign(
     {
-      _id: this._id,
-      name: this.name,
-      email: this.email,
-      admin: this.is_admin,
+      _id,
+      name,
+      email,
+      admin,
     },
     jwtsecret,
     {
