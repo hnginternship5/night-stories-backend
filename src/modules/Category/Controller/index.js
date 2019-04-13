@@ -172,10 +172,12 @@ module.exports.delete = async (req, res) => {
   }
 
   await Category.deleteOne({ _id: catId });
+
+  const category = await Category.find({}, 'name');
   sendJSONResponse(
     res,
-    204,
-    {},
+    200,
+    category,
     req.method,
     'Category Deleted',
   );

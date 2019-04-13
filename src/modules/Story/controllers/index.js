@@ -5,14 +5,6 @@ const Story = mongoose.model('Story');
 const Category = mongoose.model('Category');
 const User = mongoose.model('User');
 
-const cloudinary = require('cloudinary').v2;
-// cloudinary Config
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-
 /**
    * View All Stories
    * @param {object} req - Request object
@@ -124,15 +116,17 @@ module.exports.create = async (req, res) => {
   storyModel.author = author.name;
 
   // if user adds an image
-  if (req.files[0]) {
+  if (req.file) {
+
     try {
-      const result = await cloudinary.uploader.upload(req.files[0].path);
-      const imageId = result.public_id;
-      const image = result.secure_url;
-      storyModel.imageId = imageId;
-      storyModel.image = image;
-    } catch (errs) {
-      return sendJSONResponse(res, 400, null, req.method, 'Error Adding Image');
+      const image = {};
+    image.url = req.file.url;
+    image.id = req.file.public_id;
+
+    storyModel.imageId = image.id;
+    storyModel.image = image.url;
+    } catch (error) {
+      return sendJSONResponse(res, 408, null, req.method, 'Bad Network');
     }
   } else {
     storyModel.image = 'https://res.cloudinary.com/ephaig/image/upload/v1555067803/top-best-storybook-apps-for-kids-i-love-you-all-the-time-3.jpg';
@@ -158,15 +152,17 @@ module.exports.update = async (req, res) => {
   if (!storyId.match(/^[0-9a-fA-F]{24}$/)) {
     return sendJSONResponse(res, 400, null, req.method, 'Invalid Story ID');
   }
-
+  let catResult = {};
   // check if category is a available one
   if (category) {
-    const catResult = await Category.findOne({ name: category });
-
+    catResult = await Category.findOne({ name: category });
+    
     // check if category still exists or has been changed
     if (!catResult) {
       return sendJSONResponse(res, 400, null, req.method, 'Category Cannot Be Found');
     }
+
+    
   }
 
 
@@ -190,14 +186,16 @@ module.exports.update = async (req, res) => {
 
     // if user adds an image
     if (req.file) {
+
       try {
-        const result = cloudinary.uploader.upload(req.file.path);
-        const imageId = result.public_id;
-        const image = result.secure_url;
-        storyModel.imageId = imageId;
-        storyModel.image = image;
-      } catch (errs) {
-        return sendJSONResponse(res, 400, null, req.method, 'Error Adding Image');
+        const image = {};
+      image.url = req.file.url;
+      image.id = req.file.public_id;
+
+      storyModel.imageId = image.id;
+      storyModel.image = image.url;
+      } catch (error) {
+        return sendJSONResponse(res, 408, null, req.method, 'Bad Network');
       }
     }
     await storyModel.save();
