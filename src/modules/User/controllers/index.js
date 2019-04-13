@@ -3,7 +3,6 @@ const bcrypt = require('bcryptjs');
 const { sendJSONResponse } = require('../../../helpers');
 
 const User = mongoose.model('User');
-const Bookmark = mongoose.model('Bookmark');
 
 const cloudinary = require('cloudinary').v2;
 // cloudinary Config
@@ -154,7 +153,6 @@ module.exports.login = async (req, res) => {
     const verifyPassword = await bcrypt.compare(password, findUser.password);
 
     const token = user.generateJWT(findUser._id, findUser.name, findUser.email, findUser.is_admin);
-    const bookmark = await Bookmark.find({ user: user._id });
 
     if (verifyPassword) {
       sendJSONResponse(
@@ -167,6 +165,9 @@ module.exports.login = async (req, res) => {
           email: findUser.email,
           admin: findUser.is_admin,
           premium: findUser.is_premium,
+          bookmark: findUser.bookmarks,
+          bookmark_count: findUser.bookmarks.length,
+          liked: findUser.liked_story.length
         },
         req.method,
         'Login Successful!',

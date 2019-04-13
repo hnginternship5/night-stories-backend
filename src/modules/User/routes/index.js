@@ -29,7 +29,7 @@ router.get('/profile/:id', catchErrors(ctrlUser.view_profile));
 router.post('/login', expressValidator(validateUser.login), catchErrors(ctrlUser.login));
 router.get('/all', checkTokenExists, verifyToken, catchErrors(ctrlUser.allUsers));
 router.delete('/delete/:userId', checkTokenExists, checkAdmin, catchErrors(ctrlUser.deleteUser));
-router.get('/token', checkTokenExists, verifyToken, (req, res) => res.status(200).json({
+router.get('/token', checkAdmin, (req, res) => res.status(200).json({
   status: 200,
   method: req.method,
   message: 'Token is valid',
