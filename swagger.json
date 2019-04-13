@@ -111,7 +111,7 @@
             "in": "path",
             "description": "ID of user to return",
             "required": true,
-            "type": "integer"
+            "type": "string"
           }
         ],
         "responses": {
@@ -146,7 +146,7 @@
             "in": "path",
             "description": "ID of user to edit",
             "required": true,
-            "type": "integer"
+            "type": "string"
           },
           {
             "in": "body",
@@ -217,7 +217,7 @@
         ],
         "responses": {
           "404": {
-            "description": "unavailable "
+            "description": "Category not found"
           }
         }
       }
@@ -238,7 +238,7 @@
             "in": "path",
             "description": "ID of category to edit",
             "required": true,
-            "type": "integer"
+            "type": "string"
           },
           {
             "in": "body",
@@ -309,7 +309,7 @@
         ],
         "responses": {
           "404": {
-            "description": "unavailable "
+            "description": "Story not found"
           }
         }
       }
@@ -330,7 +330,7 @@
             "in": "path",
             "description": "ID of story to return",
             "required": true,
-            "type": "integer"
+            "type": "string"
           }
         ],
         "responses": {
@@ -349,28 +349,28 @@
         }
       }
     },
-    "/story/category/{catName}": {
+    "/story/category/{catId}": {
       "get": {
         "tags": [
           "story"
         ],
         "summary": "Get stories by category",
-        "description": "Returns the list of story by category name",
+        "description": "Returns the list of story by category ID",
         "produces": [
           "application/json"
         ],
         "parameters": [
           {
-            "name": "catName",
+            "name": "catId",
             "in": "path",
-            "description": "category name of stories to return",
+            "description": "category ID of stories to return",
             "required": true,
             "type": "string"
           }
         ],
         "responses": {
           "404": {
-            "description": "unavailable "
+            "description": "Story not found "
           }
         }
       }
@@ -391,7 +391,7 @@
             "in": "path",
             "description": "ID of story to edit",
             "required": true,
-            "type": "integer"
+            "type": "string"
           },
           {
             "in": "body",
@@ -418,6 +418,102 @@
           }
         }
       }
+    },
+    "/story/delete/{storyId}": {
+      "delete": {
+        "tags": [
+          "story"
+        ],
+        "summary": "Delete story",
+        "description": "This can only be done by an authorized user.",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "storyId",
+            "in": "path",
+            "description": "ID of the story to be deleted",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Story not found"
+          }
+        }
+      }
+    },
+    "/story/like/{storyId}": {
+      "get": {
+        "tags": [
+          "story"
+        ],
+        "summary": "Like a story by ID",
+        "description": "A story can be like by an authorized user",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "storyId",
+            "in": "path",
+            "description": "Like story id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Story not found"
+          }
+        }
+      }
+    },
+    "/story/dislike/{storyId}": {
+      "put": {
+        "tags": [
+          "story"
+        ],
+        "summary": "Dislike a story by ID",
+        "description": "Unlike  a story base on ID by an authorized user",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "storyId",
+            "in": "path",
+            "description": "ID of story to be dislike",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Story not found"
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "oauth": {
+      "type": "oauth2",
+      "authorizationUrl": "https://dragon-legend-5.herokuapp.com/api/v1/user/login",
+      "flow": "implicit"
+    },
+    "api_key": {
+      "type": "apiKey",
+      "name": "api_key",
+      "in": "header"
     }
   },
   "definitions": {
