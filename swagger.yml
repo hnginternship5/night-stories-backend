@@ -1,0 +1,473 @@
+swagger: "2.0"
+info:
+  description: "KIDSTORIES APP  api documentation. \n 
+  By: TEAM DRAGONLEGEND \n
+  Backend API Repository:https://github.com/hnginternship5/night-stories-backend \n
+  Frontend Repository:
+  https://github.com/AlfredBryan/hng-stories-frontend \n
+  App Repository:
+  https://hnginternship5.slack.com/files/UHJJ2360N/FHZ8UJNT0/app-debug.apk \n
+  Backend URL: https://hng-admin.herokuapp.com
+"
+  version: "1.0.0"
+  title: "KIDSTORIES APP"
+  termsOfService: "https://dragon-legend-5.herokuapp.com"
+  contact:
+    email: "interns@hng.tech"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "dragon-legend-5.herokuapp.com"
+basePath: "/api/v1"
+tags:
+- name: "user"
+  description: "Users and Admin"
+- name: "category"
+  description: "Story category"
+- name: "story"
+  description: "Bedtime story"
+schemes:
+- "https"
+paths:
+  /user/register:
+    post:
+      tags:
+      - "user"
+      summary: "Create an Admin user"
+      description: "This is an endpoint to create an admin user"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "user object that needs to be added"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        405:
+          description: "Invalid input"
+  /user/login:
+    post:
+      tags:
+      - "user"
+      summary: "Login a user"
+      description: "This is an endpoint for user login"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "user login information object"
+        required: true
+        schema:
+          $ref: "#/definitions/UserLogin"
+      responses:
+        400:
+          description: "Invalid username/password supplied"
+  /user/profile/{id}:
+    get:
+      tags:
+      - "user"
+      summary: "Get a user profile by ID"
+      description: "Returns a single user"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "ID of user to return"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/User"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "User not found"
+  /user/edit/{userId}:
+    put:
+      tags:
+      - "user"
+      summary: "Edit a user by ID"
+      description: "Edit  user information by ID"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "userId"
+        in: "path"
+        description: "ID of user to edit"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "user object for updating"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/User"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "User not found"
+  /user/delete/{userId}:
+    delete:
+      tags:
+      - "user"
+      summary: "Delete user"
+      description: "This can only be done by an authorized user."
+      produces:
+      - "application/json"
+      parameters:
+      - name: "userId"
+        in: "path"
+        description: "ID of the user to be deleted"
+        required: true
+        type: "string"
+      responses:
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Story not found"
+  /category/create:
+    post:
+      tags:
+      - "category"
+      summary: "Create story category"
+      description: "This is an endpoint to create story category"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "category object that needs to be added"
+        required: true
+        schema:
+          $ref: "#/definitions/Category"
+      responses:
+        405:
+          description: "Invalid input"
+  /category/all:
+    get:
+      tags:
+      - "category"
+      summary: "Get all category"
+      description: "Returns the list of category"
+      produces:
+      - "application/json"
+      responses:
+        404:
+          description: "Category not found"
+  /category/edit/{catId}:
+    put:
+      tags:
+      - "category"
+      summary: "Edit a category by ID"
+      description: "Edit  story category by ID"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "catId"
+        in: "path"
+        description: "ID of category to edit"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "category object to be updated"
+        required: true
+        schema:
+          $ref: "#/definitions/Category"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Category"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Category not found"
+  /category/{id}:
+    get:
+      tags:
+      - "category"
+      summary: "Get a category by ID"
+      description: "Returns a single category"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "ID of category to return"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Category"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "User not found"
+  /category/delete/{catId}:
+    delete:
+      tags:
+      - "category"
+      summary: "Delete a category"
+      description: "This can only be done by an authorized user."
+      produces:
+      - "application/json"
+      parameters:
+      - name: "catId"
+        in: "path"
+        description: "ID of the category to be deleted"
+        required: true
+        type: "string"
+      responses:
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Story not found"
+  /story/create:
+    post:
+      tags:
+      - "story"
+      summary: "Create story"
+      description: "This is an endpoint to create story"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "category object that needs to be added"
+        required: true
+        schema:
+          $ref: "#/definitions/Story"
+      responses:
+        405:
+          description: "Invalid input"
+  /story:
+    get:
+      tags:
+      - "story"
+      summary: "Get all story"
+      description: "Returns the list of story"
+      produces:
+      - "application/json"
+      responses:
+        404:
+          description: "Story not found"
+  /story/{id}:
+    get:
+      tags:
+      - "story"
+      summary: "Get a story by ID"
+      description: "Returns a single story"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "ID of story to return"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Story"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Story not found"
+  /story/category/{catId}:
+    get:
+      tags:
+      - "story"
+      summary: "Get stories by category"
+      description: "Returns the list of story by category ID"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "catId"
+        in: "path"
+        description: "category ID of stories to return"
+        required: true
+        type: "string"
+      responses:
+        404:
+          description: "Story not found "
+  /story/edit/{storyId}:
+    put:
+      tags:
+      - "story"
+      summary: "Edit a story by ID"
+      description: "Edit  a story base on ID"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "storyId"
+        in: "path"
+        description: "ID of story to edit"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "story object to be updated"
+        required: true
+        schema:
+          $ref: "#/definitions/Story"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Story"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Story not found"
+  /story/delete/{storyId}:
+    delete:
+      tags:
+      - "story"
+      summary: "Delete story"
+      description: "This can only be done by an authorized user."
+      produces:
+      - "application/json"
+      parameters:
+      - name: "storyId"
+        in: "path"
+        description: "ID of the story to be deleted"
+        required: true
+        type: "string"
+      responses:
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Story not found"
+  /story/like/{storyId}:
+    get:
+      tags:
+      - "story"
+      summary: "Like a story by ID"
+      description: "A story can be like by an authorized user"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "storyId"
+        in: "path"
+        description: "Like story id"
+        required: true
+        type: "string"
+      responses:
+        404:
+          description: "Story not found"
+  /story/dislike/{storyId}:
+    put:
+      tags:
+      - "story"
+      summary: "Dislike a story by ID"
+      description: "Unlike  a story base on ID by an authorized user"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "storyId"
+        in: "path"
+        description: "ID of story to be dislike"
+        required: true
+        type: "string"
+      responses:
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Story not found"
+  /favorite/story/{storyId}:
+    get:
+      tags:
+      - "story"
+      summary: "Favorite or Unfavorite a story by ID"
+      description: "A story can be favorite or unfavorite by user"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "storyId"
+        in: "path"
+        description: "Story id"
+        required: true
+        type: "string"
+      responses:
+        404:
+          description: "Story not found"
+  /favorite/all:
+    get:
+      tags:
+      - "story"
+      summary: "Get all favorites story"
+      description: "Each user can get all his favorite stories"
+      produces:
+      - "application/json"
+      responses:
+        404:
+          description: "Story not found"
+securityDefinitions:
+  oauth:
+    type: "oauth2"
+    authorizationUrl: "https://dragon-legend-5.herokuapp.com/api/v1/user/login"
+    flow: "implicit"
+  api_key:
+    type: "apiKey"
+    name: "api_key"
+    in: "header"
+definitions:
+  User:
+    type: "object"
+    properties:
+      email:
+        type: "string"
+      password:
+        type: "string"
+      name:
+        type: "string"
+      designation:
+        type: "string"
+      is_premium:
+        type: "boolean"
+      is_admin:
+        type: "boolean"
+  UserLogin:
+    type: "object"
+    properties:
+      email:
+        type: "string"
+      password:
+        type: "string"
+  Category:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+  Story:
+    type: "object"
+    properties:
+      title:
+        type: "string"
+      story:
+        type: "string"
+      category:
+        $ref: "#/definitions/Category"
