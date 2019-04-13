@@ -4,14 +4,6 @@ const { sendJSONResponse } = require('../../../helpers');
 
 const User = mongoose.model('User');
 
-const cloudinary = require('cloudinary').v2;
-// cloudinary Config
-cloudinary.config({
-  cloud_name: process.env.CLODINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-
 /**
    * Register user
    * @param {object} req - Request object
@@ -81,10 +73,39 @@ module.exports.update = async (req, res) => {
     return sendJSONResponse(res, 400, null, req.method, 'Invalid User ID');
   }
 
-  User.findById(userId, (err, user) => {
-    if (err) {
-      return sendJSONResponse(res, 409, null, req.method, 'User not Found!');
-    }
+  // User.findById(userId, (err, user) => {
+  //   if (err) {
+  //     return sendJSONResponse(res, 409, null, req.method, 'User not Found!');
+  //   }
+  //   if (name) {
+  //     user.name = name;
+  //   }
+  //   if (email) {
+  //     user.email = email;
+  //   }
+  //   if (password) {
+  //     user.password = bcrypt.hashSync(password, 10);
+  //   }
+  //   if (req.file) {
+  //     console.log(req.file)
+  //     try {
+  //       if (user.imageId === '') {
+  //         cloudinary.uploader.destroy(user.imageId);
+  //       }
+  //       const result = cloudinary.uploader.upload(req.file.path);
+  //       const imageId = result.public_id;
+  //       const image = result.secure_url;
+  //       console.log(imageId)
+  //       user.imageId = imageId;
+  //       user.image = image;
+  //     } catch (errs) {
+  //       return sendJSONResponse(res, 400, null, req.method, 'Error Adding Image');
+  //     }
+  //   }
+
+  const user = await User.findById(userId);
+
+  if (user) {
     if (name) {
       user.name = name;
     }
@@ -95,17 +116,16 @@ module.exports.update = async (req, res) => {
       user.password = bcrypt.hashSync(password, 10);
     }
     if (req.file) {
+
       try {
-        if (user.imageId === '') {
-          cloudinary.uploader.destroy(user.imageId);
-        }
-        const result = cloudinary.uploader.upload(req.file.path);
-        const imageId = result.public_id;
-        const image = result.secure_url;
-        user.imageId = imageId;
-        user.image = image;
-      } catch (errs) {
-        return sendJSONResponse(res, 400, null, req.method, 'Error Adding Image');
+        const image = {};
+      image.url = req.file.url;
+      image.id = req.file.public_id;
+
+      user.imageId = image.id;
+      user.image = image.url;
+      } catch (error) {
+        return sendJSONResponse(res, 408, null, req.method, 'Bad Network');
       }
     }
 
@@ -113,7 +133,7 @@ module.exports.update = async (req, res) => {
     (is_premium) ? user.is_premium = is_premium : null;
 
     user.save();
-    sendJSONResponse(
+    return sendJSONResponse(
       res,
       200,
       {
@@ -131,7 +151,11 @@ module.exports.update = async (req, res) => {
       req.method,
       'User Updated Succesfully!',
     );
-  });
+      
+    }
+
+    return sendJSONResponse(res, 409, null, req.method, 'User not Found!');
+ 
 };
 
 /**
