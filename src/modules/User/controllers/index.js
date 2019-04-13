@@ -112,11 +112,6 @@ module.exports.update = async (req, res) => {
 
     (is_admin) ? user.is_admin = is_admin : null;
     (is_premium) ? user.is_premium = is_premium : null;
-    const bookmark = Bookmark.find({ user: user._id });
-    const numOfFav = 0;
-    if(bookmark !== null){
-      numOfFav = bookmark.length;
-    }
 
     user.save();
     sendJSONResponse(
@@ -129,7 +124,10 @@ module.exports.update = async (req, res) => {
         admin: user.is_admin,
         premium: user.is_premium,
         image: user.image,
-        numOfFav
+        bookmark: user.bookmarks,
+        bookmark_count: user.bookmarks.length,
+        liked: user.liked_story.length
+        
       },
       req.method,
       'User Updated Succesfully!',
@@ -214,7 +212,8 @@ module.exports.view_profile = async (req, res) => {
       image: user.image,
       imageId: user.imageId,
       bookmark: user.bookmarks,
-      bookmark_count: user.bookmarks.length
+      bookmark_count: user.bookmarks.length,
+      liked: user.liked_story.length
     },
     req.method,
     'View Profile',

@@ -120,7 +120,7 @@ module.exports.create = async (req, res) => {
   storyModel.cat_id = catResult._id;
   const author = decodeToken(req, res);
 
-  storyModel.designation = author._id;
+  storyModel.designation = author._id; 
   storyModel.author = author.name;
 
   // if user adds an image
@@ -215,8 +215,8 @@ module.exports.update = async (req, res) => {
    */
 module.exports.likeStory = async (req, res) => {
   const { storyId } = req.params;
-  const user = decodeToken(req, res)._id;
-
+  const user = decodeToken(req, res);
+  console.log(user)
   if (!storyId.match(/^[0-9a-fA-F]{24}$/)) {
     return sendJSONResponse(res, 400, null, req.method, 'Invalid Story ID');
   }
@@ -229,15 +229,21 @@ module.exports.likeStory = async (req, res) => {
   }
 
   // Checking wheter the post have been liked or not
-  if (story.likes.filter(like => like.user.toString() === user).length > 0) {
-    return sendJSONResponse(res, 400, null, req.method, 'You have like this story already');
-  }
+  // if (story.likes.filter(like => like.user.toString() === user).length > 0) {
+  //   return sendJSONResponse(res, 400, null, req.method, 'You have like this story already');
+  // }
 
   // like story
-  const test = await Story.update(
-    { _id: storyId },
-    { $push: { likes: { user } } },
-  );
+  // await Story.update(
+  //   { _id: storyId },
+  //   { $push: { likes: { user } } },
+  // );
+
+  //add to user schema
+  const use = User.findById(user._id);
+  console.log(use.name)
+
+  //userSchema.liked_story.push(storyId);
 
   return sendJSONResponse(res, 200, null, req.method, 'Story Liked');
 };
@@ -295,19 +301,21 @@ module.exports.deleteStory = async (req, res) => {
   //delete story from category
   const categoryArray = story.cat_id;
 
-  for (let i = 0; i < categoryArray.length; i++) {
-    const category = categoryArray[i];
-    Category.findById(category, (err, findCategory) => {
-      if (err) {
-        return sendJSONResponse(res, 404, null, req.method, 'Category Does Not Exists');
-      }
-      const arr = findCategory.stories;
-      let index = arr.indexOf(story._id);
-      if (index > -1) {
-        arr.splice(index, 1);
-      }
-    })
+  try {
+    for (let i = 0; i < categoryArray.length; i++) {
+      const category = categoryArray[i];
+      Category.findById(category, (err, findCategory) => {
+        const arr = findCategory.stories;
+        let index = arr.indexOf(story._id);
+        if (index > -1) {
+          arr.splice(index, 1);
+        }
+      })
+    }
+    Category.save();
+  } catch (error) {
   }
+  
   //await Category.findOne({_id: story.cat_id})
   // delete story
   await Story.findOneAndRemove({ _id: storyId });
