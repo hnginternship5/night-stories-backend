@@ -26,7 +26,7 @@ module.exports = {
 
     try {
       const decoded = jwt.verify(authorization, jwtsecret);
-      if (decoded._id === userId) {
+      if (decoded._id) {
         req.id = decoded.id;
         return next();
       }
