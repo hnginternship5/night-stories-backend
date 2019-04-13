@@ -202,7 +202,6 @@ module.exports.view_profile = async (req, res) => {
     return sendJSONResponse(res, 404, null, req.method, 'User Not Found');
   }
 
-  console.log(user.bookmarks.length)
   sendJSONResponse(
     res,
     200,
@@ -236,8 +235,6 @@ module.exports.allUsers = async (req, res) => {
     hash: false,
   };
   const user = await User.find({}, except);
-  console.log(user);
-
 
   if (user) {
     sendJSONResponse(

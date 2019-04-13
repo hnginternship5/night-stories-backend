@@ -34,23 +34,29 @@ module.exports.addAndRemoveFavorite = async (req, res) => {
     newBookmark.story = storyId;
 
     newBookmark.save();
+
+    //save to user schema
     const addToUser = await User.findById(user._id);
     addToUser.bookmarks.push(newBookmark.story);
-    //addToUser.save()
+    addToUser.save()
     return sendJSONResponse(res, 200, { newBookmark }, req.method, 'Story Favorited');
   }
 
+  //if story has been favorited, remove
   await Bookmark.findOneAndDelete({ user:user._id, story:storyId });
   const addToUser = await User.findById(user._id);
   const arr = addToUser.bookmarks;
   
   for (let i = 0; i < arr.length; i++) {
     const fav = arr[i];
-      arr.pop();
-    
+    let j = arr.indexOf(fav);
+    if (JSON.stringify(fav._id) === JSON.stringify(favAction.story)) {
+      arr.splice(j, 1);
+    }
   }
-   console.log(arr.length)
-  // addToUser.save();
+
+  //save to user schema
+  addToUser.save();
   return sendJSONResponse(res, 200, { favAction }, req.method, 'Favorite Has Been Removed');
 };
 
