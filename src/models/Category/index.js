@@ -20,6 +20,12 @@ const categorySchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  image: {
+    type: String
+  },
+  imageId: {
+    type: String
+  }
 });
 
 const Category = mongoose.model('Category', categorySchema);

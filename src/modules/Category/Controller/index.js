@@ -29,6 +29,21 @@ module.exports.create = async (req, res) => {
   const category = new Category();
 
   category.name = name;
+  if (req.file) {
+
+    try {
+      const image = {};
+      image.url = req.file.url;
+      image.id = req.file.public_id;
+
+      category.imageId = image.id;
+      category.image = image.url;
+    } catch (error) {
+      return sendJSONResponse(res, 408, null, req.method, 'Bad Network');
+    }
+  }else{
+    category.image = 'https://res.cloudinary.com/ephaig/image/upload/v1555067803/top-best-storybook-apps-for-kids-i-love-you-all-the-time-3.jpg';
+  }
   category.save();
   sendJSONResponse(
     res,

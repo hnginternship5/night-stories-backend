@@ -5,10 +5,12 @@ const { sendJSONResponse } = require('../../../helpers');
 const User = mongoose.model('User');
 
 /**
-   * Register user
-   * @param {object} req - Request object
-   * @param {object} res - Response object
-   * @return {json} res.json
+   * Registers a new user
+   * @method register
+   * @memberof Users
+   * @param {object} req
+   * @param {object} res
+   * @returns {(function|object)} Function next() or JSON object
    */
 module.exports.register = async (req, res) => {
   const {
@@ -36,19 +38,22 @@ module.exports.register = async (req, res) => {
       user.image = 'https://res.cloudinary.com/ephaig/image/upload/v1555015808/download.png';
       user.save();
       const token = user.generateJWT(user._id, name, email, user.is_admin);
-      const numOfFav = 0;
 
       sendJSONResponse(
         res,
         200,
         {
-          token,
           id: user._id,
+          token,
           name: user.name,
           email: user.email,
           admin: user.is_admin,
           premium: user.is_premium,
-          numOfFav
+          image: user.image,
+          imageId: user.imageId,
+          bookmark: user.bookmarks,
+          bookmark_count: 0,
+          liked: user.liked_story.length,
         },
         req.method,
         'Created New User!'
@@ -72,36 +77,6 @@ module.exports.update = async (req, res) => {
   if (!userId.match(/^[0-9a-fA-F]{24}$/)) {
     return sendJSONResponse(res, 400, null, req.method, 'Invalid User ID');
   }
-
-  // User.findById(userId, (err, user) => {
-  //   if (err) {
-  //     return sendJSONResponse(res, 409, null, req.method, 'User not Found!');
-  //   }
-  //   if (name) {
-  //     user.name = name;
-  //   }
-  //   if (email) {
-  //     user.email = email;
-  //   }
-  //   if (password) {
-  //     user.password = bcrypt.hashSync(password, 10);
-  //   }
-  //   if (req.file) {
-  //     console.log(req.file)
-  //     try {
-  //       if (user.imageId === '') {
-  //         cloudinary.uploader.destroy(user.imageId);
-  //       }
-  //       const result = cloudinary.uploader.upload(req.file.path);
-  //       const imageId = result.public_id;
-  //       const image = result.secure_url;
-  //       console.log(imageId)
-  //       user.imageId = imageId;
-  //       user.image = image;
-  //     } catch (errs) {
-  //       return sendJSONResponse(res, 400, null, req.method, 'Error Adding Image');
-  //     }
-  //   }
 
   const user = await User.findById(userId);
 
@@ -191,7 +166,9 @@ module.exports.login = async (req, res) => {
           premium: findUser.is_premium,
           bookmark: findUser.bookmarks,
           bookmark_count: findUser.bookmarks.length,
-          liked: findUser.liked_story.length
+          liked: findUser.liked_story.length,
+          image: findUser.image,
+          imageId: findUser.imageId
         },
         req.method,
         'Login Successful!',
