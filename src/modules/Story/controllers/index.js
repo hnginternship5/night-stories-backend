@@ -22,7 +22,7 @@ module.exports.viewStories = async (req, res) => {
    * @param {object} req - Request object
    * @param {object} res - Response object
    * @return {json} res.json
-   */
+   */ 
 module.exports.viewStoriesByCategory = async (req, res) => {
   const { catId } = req.params;
 

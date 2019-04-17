@@ -16,7 +16,7 @@ module.exports.create = async (req, res) => {
   // Check if category exists
   const findCat = await Category.findOne({ name });
 
-  // If exists
+  // If exists 
   if (findCat) {
     return sendJSONResponse(
       res,

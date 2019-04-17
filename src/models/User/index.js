@@ -43,10 +43,7 @@ const userSchema = new Schema({
   password: {
     type: String,
     required: true,
-  },
-  display_picture: {
-    type: String,
-  },
+  }
 
 }, { timestamps: true });
 
