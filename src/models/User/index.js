@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
-const { randomBytes, pbkdf2Sync } = require('crypto');
 const { sign } = require('jsonwebtoken');
 const { jwtsecret } = require('../../config');
 
-const userSchema = new mongoose.Schema({
+const { Schema } = mongoose;
+const userSchema = new Schema({
   name: { type: String, required: true },
   email: { type: String, required: true },
   designation: {
@@ -15,27 +15,48 @@ const userSchema = new mongoose.Schema({
   is_premium: {
     type: Boolean,
   },
-  hash: String,
-  salt: String,
+  // @Brainz added image
+  image: {
+    type: String,
+  },
+  imageId: {
+    type: String,
+  },
+  // @raji worked here
+  liked_story: [
+    {
+      story: {
+        type: Schema.Types.ObjectId,
+        ref: 'Story',
+      },
+    },
+  ],
+  bookmarks: [
+    {
+      story: {
+        type: Schema.Types.ObjectId,
+        ref: 'Story',
+      },
+    },
+  ],
+  // End of work
+  password: {
+    type: String,
+    required: true,
+  },
+  display_picture: {
+    type: String,
+  },
 
 }, { timestamps: true });
 
-userSchema.methods.setPassword = function userPassword(password) {
-  this.salt = randomBytes(16).toString('hex');
-  this.hash = pbkdf2Sync(password, this.salt, 100, 64, 'sha512').toString('hex');
-};
-
-userSchema.methods.verifyPassword = function verify(password) {
-  const hash = pbkdf2Sync(password, this.saly, 100, 64, 'sha512').toString('hex');
-  return this.hash === hash;
-};
-
-userSchema.methods.generateJWT = function generate() {
+userSchema.methods.generateJWT = function generate(_id, name, email, admin) {
   return sign(
     {
-      _id: this._id,
-      name: this.name,
-      email: this.email,
+      _id,
+      name,
+      email,
+      admin,
     },
     jwtsecret,
     {
