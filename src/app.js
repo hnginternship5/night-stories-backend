@@ -10,10 +10,10 @@ const chalk = require('./config/chalk');
 const config = require('./config');
 
 const morgan = require('morgan');
-const { sendJSONResponse } = require('./helpers');
 const logger = require('./config/logger');
 
 require('./models');
+const { sendJSONResponse } = require('./helpers');
 
 if (config.env !== 'test') {
   app.use(morgan('dev'));

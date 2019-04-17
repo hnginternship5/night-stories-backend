@@ -1,4 +1,8 @@
 const jwt = require('jsonwebtoken');
+const express = require('express');
+const bcrypt = require('bcryptjs')
+const mongoose = require('mongoose')
+const User = mongoose.model('User')
 const { jwtsecret } = require('../config');
 
 module.exports = {
@@ -87,4 +91,25 @@ module.exports = {
       data: null,
     });
   },
+
+  authenticate(password, hashPassword){
+    return new Promise(async (resolve, reject)=>{
+        try{
+            //Match Password
+            bcrypt.compare(password, hashPassword)
+            if(err) throw err;
+            if(isMatch){
+                resolve('User authenticated')
+            }
+            else{
+                //Passwords didn't match
+                reject('Authentication failed')
+            }
+        }
+        catch(err){
+            //Email not fond
+            reject('Authentication Failed')
+        }
+    })
+  }
 };
