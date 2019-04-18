@@ -46,6 +46,19 @@ const storySchema = new Schema({
     },
   ],
   // Work ends here
+
+  comments: [
+    {
+      user: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+      },
+      comment: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
 });
 
 const Story = mongoose.model('Story', storySchema);
