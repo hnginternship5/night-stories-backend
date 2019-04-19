@@ -73,8 +73,6 @@ module.exports.viewSingleStory = async (req, res) => {
   //   const st = await User.findOne(story.designation);
   //   console.log(story);
   // }
-  const user = User.findOne({ _id: story.designation });
-  console.log(user);
   // if(user) const author = user.name;
   return sendJSONResponse(res, 200, { story }, req.method, 'Story Fetched');
 };
@@ -114,6 +112,8 @@ module.exports.create = async (req, res) => {
 
   storyModel.designation = author._id;
   storyModel.author = author.name;
+  storyModel.likes = 0;
+  storyModel.dislikes = 0;
 
   // if user adds an image
   if (req.file) {
@@ -213,7 +213,7 @@ module.exports.update = async (req, res) => {
    */
 module.exports.likeStory = async (req, res) => {
   const { storyId } = req.params;
-  const user = decodeToken(req, res)._id;
+  //const user = decodeToken(req, res)._id;
 
   if (!storyId.match(/^[0-9a-fA-F]{24}$/)) {
     return sendJSONResponse(res, 400, null, req.method, 'Invalid Story ID');
@@ -227,22 +227,25 @@ module.exports.likeStory = async (req, res) => {
   }
 
   // Checking wheter the post have been liked or not
-  if (story.likes.filter(like => like.user.toString() === user).length > 0) {
-    return sendJSONResponse(res, 400, null, req.method, 'You have like this story already');
-  }
+  // if (story.likes.filter(like => like.user.toString() === user).length > 0) {
+  //   return sendJSONResponse(res, 400, null, req.method, 'You have like this story already');
+  // }
 
   // like story
-  const test = await Story.update(
-    { _id: storyId },
-    { $push: { likes: { user } } },
-  );
+  // const test = await Story.update(
+  //   { _id: storyId },
+  //   { $push: { likes: { user } } },
+  // );
+
+  story.likes += 1;
+  await story.save();
 
   return sendJSONResponse(res, 200, null, req.method, 'Story Liked');
 };
 
 module.exports.disLikeStory = async (req, res) => {
   const { storyId } = req.params;
-  const user = decodeToken(req, res)._id;
+  //const user = decodeToken(req, res)._id;
 
   if (!storyId.match(/^[0-9a-fA-F]{24}$/)) {
     return sendJSONResponse(res, 400, null, req.method, 'Invalid Story ID');
@@ -256,15 +259,17 @@ module.exports.disLikeStory = async (req, res) => {
   }
 
   // Checking wheter the post have been liked or not
-  if (story.likes.filter(like => like.user.toString() === user).length === 0) {
-    return sendJSONResponse(res, 400, null, req.method, 'You have not like this story yet');
-  }
+  // if (story.likes.filter(like => like.user.toString() === user).length === 0) {
+  //   return sendJSONResponse(res, 400, null, req.method, 'You have not like this story yet');
+  // }
 
   // like story
-  await Story.update(
-    { _id: storyId },
-    { $pull: { likes: { user } } },
-  );
+  // await Story.update(
+  //   { _id: storyId },
+  //   { $pull: { likes: { user } } },
+  // );
+  story.dislikes += 1;
+  await story.save();
 
   return sendJSONResponse(res, 200, null, req.method, 'Story Disliked');
 };
