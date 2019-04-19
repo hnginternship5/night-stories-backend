@@ -12,7 +12,7 @@ const User = mongoose.model('User');
    * @return {json} res.json
    */
 module.exports.viewStories = async (req, res) => {
-  const stories = await Story.find({}).populate('cat_id', 'name');
+  const stories = await Story.find({}).populate('cat_id comments.user', 'name');
 
   if (stories) { sendJSONResponse(res, 200, { stories }, req.method, 'Stories Fetched'); } else { return sendJSONResponse(res, 500, null, req.method, 'Stories Could Not Be Fetched'); }
 };
@@ -39,7 +39,7 @@ module.exports.viewStoriesByCategory = async (req, res) => {
     const storyArray = [];
     for (let i = 0; i < stories.length; i++) {
       const story = stories[i];
-      const st = await Story.findOne(story);
+      const st = await Story.findOne(story).populate('cat_id comments.user', 'name');
       storyArray.push(st);
     }
 
@@ -63,7 +63,7 @@ module.exports.viewSingleStory = async (req, res) => {
     return sendJSONResponse(res, 400, null, req.method, 'Invalid Story ID');
   }
 
-  const story = await Story.findById(id);
+  const story = await Story.findById(id).populate('cat_id comments.user', 'name');
   if (!story) {
     return sendJSONResponse(res, 404, null, req.method, 'Story Is Not Available!');
   }
@@ -321,4 +321,24 @@ module.exports.deleteStory = async (req, res) => {
   const reloadStories = await Story.find({}, except);
 
   return sendJSONResponse(res, 200, { reloadStories }, req.method, 'Story Deleted');
+};
+
+module.exports.createComment = async (req, res) => {
+  const { comment } = req.body;
+  const { storyId } = req.params;
+  const token = req.headers.authorization;
+  const userId = decodeToken(req, res)._id; 
+  const findStory = Story.findOne({ _id: storyId });
+
+  if(!findStory) {
+    return sendJSONResponse(res, 400, {}, req.method, 'Story does not exist');
+  }
+
+  await Story.update(
+    { _id: storyId },
+    { $push: { comments: { user: userId, comment } } },
+  );
+
+  return sendJSONResponse(res, 201, {}, req.method, 'Comment created successfully');
+
 };
