@@ -236,11 +236,17 @@ module.exports.likeStory = async (req, res) => {
   //   { _id: storyId },
   //   { $push: { likes: { user } } },
   // );
+  let num = story.likes;
+  if(isNaN(num)){
+    num = 1;
+  }else{
+    num += 1;
+  }
 
-  story.likes += 1;
+  story.likes = num;
   await story.save();
 
-  return sendJSONResponse(res, 200, null, req.method, 'Story Liked');
+  return sendJSONResponse(res, 200, story, req.method, 'Story Liked');
 };
 
 module.exports.disLikeStory = async (req, res) => {
@@ -268,10 +274,16 @@ module.exports.disLikeStory = async (req, res) => {
   //   { _id: storyId },
   //   { $pull: { likes: { user } } },
   // );
-  story.dislikes += 1;
-  await story.save();
+  let num = story.dislikes;
+  if(isNaN(num)){
+    num = 1;
+  }else{
+    num += 1;
+  }
 
-  return sendJSONResponse(res, 200, null, req.method, 'Story Disliked');
+  story.dislikes = num;
+  await story.save();
+  return sendJSONResponse(res, 200,story, req.method, 'Story Disliked');
 };
 
 module.exports.deleteStory = async (req, res) => {

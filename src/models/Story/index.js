@@ -36,8 +36,8 @@ const storySchema = new Schema({
   },
   views: Number,
   status: String,
-  likes: Number,
-  dislikes: Number,
+  likes: {type:Number},
+  dislikes: {type:Number},
   // @raji Woked here
   // likes: [
   //   {
