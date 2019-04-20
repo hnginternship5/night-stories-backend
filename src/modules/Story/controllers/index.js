@@ -40,7 +40,10 @@ module.exports.viewStoriesByCategory = async (req, res) => {
     for (let i = 0; i < stories.length; i++) {
       const story = stories[i];
       const st = await Story.findOne(story).populate('cat_id comments.user', 'name');
-      storyArray.push(st);
+      if(st != null){
+        storyArray.push(st);
+      }
+     
     }
 
     if (stories.length > 0) { return sendJSONResponse(res, 200, { storyArray }, req.method, 'Stories Grouped By Category Fetched'); }
@@ -331,6 +334,7 @@ module.exports.deleteStory = async (req, res) => {
     _v: false
   };
   const reloadStories = await Story.find({}, except);
+  console.log(reloadStories);
 
   return sendJSONResponse(res, 200, { reloadStories }, req.method, 'Story Deleted');
 };
