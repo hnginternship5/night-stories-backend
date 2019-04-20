@@ -79,6 +79,20 @@ module.exports.update = async (req, res) => {
       category.name = name;
     }
 
+    if (req.file) {
+
+      try {
+        const image = {};
+        image.url = req.file.url;
+        image.id = req.file.public_id;
+  
+        category.imageId = image.id;
+        category.image = image.url;
+      } catch (error) {
+        return sendJSONResponse(res, 408, null, req.method, 'Bad Network');
+      }
+    }
+
     category.save();
     sendJSONResponse(
       res,
@@ -157,6 +171,7 @@ module.exports.getSingleCategory = async (req, res) => {
 module.exports.delete = async (req, res) => {
   const { catId } = req.params;
 
+  console.log(true);
   if (!catId.match(/^[0-9a-fA-F]{24}$/)) {
     return sendJSONResponse(res, 400, null, req.method, 'Invalid Category ID');
   }
@@ -188,7 +203,7 @@ module.exports.delete = async (req, res) => {
 
   await Category.deleteOne({ _id: catId });
 
-  const category = await Category.find({}, 'name');
+  const category = await Category.find({}, 'name image');
   sendJSONResponse(
     res,
     200,
