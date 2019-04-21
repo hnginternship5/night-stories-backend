@@ -113,7 +113,7 @@ module.exports.update = async (req, res) => {
    * @return {json} res.json
    */
 module.exports.getAll = async (req, res) => {
-  const category = await Category.find({}, 'name');
+  const category = await Category.find({}, 'name image');
 
   if (category) {
     return sendJSONResponse(
