@@ -2,8 +2,8 @@ const joi = require('joi');
 
 module.exports.register = {
   body: {
-    email: joi.string().email().required(),
     name: joi.string().required(),
+    email: joi.string().email().required(),
     password: joi.string().alphanum().min(6).max(30)
       .required(),
     designation: joi.string(),

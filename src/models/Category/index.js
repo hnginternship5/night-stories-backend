@@ -5,8 +5,7 @@ const Schema = mongoose.Schema;
 const categorySchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true,
-    lowercase: true,
+    required: true
   },
 
   stories: [

@@ -142,6 +142,8 @@ module.exports.update = async (req, res) => {
 module.exports.login = async (req, res) => {
   const { email, password } = req.body;
 
+  console.log(req.files)
+
   const user = new User();
 
   // Get User by Email

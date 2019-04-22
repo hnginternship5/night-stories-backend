@@ -12,9 +12,14 @@ const Story = mongoose.model('Story');
    */
 module.exports.create = async (req, res) => {
   let { name } = req.body;
-  name = name.toLowerCase();
+  // if (!name) {
+  //   return sendJSONResponse(res, 404, null, req.method, 'Category name is missing');
+  // }
+  name = name.charAt(0).toUpperCase() + name.slice(1);
   // Check if category exists
   const findCat = await Category.findOne({ name });
+
+  console.log(req.body)
 
   // If exists 
   if (findCat) {
@@ -63,7 +68,7 @@ module.exports.create = async (req, res) => {
    * @return {json} res.json
    */
 module.exports.update = async (req, res) => {
-  const { name } = req.body;
+  let { name } = req.body;
   const { catId } = req.params;
 
   if (!catId.match(/^[0-9a-fA-F]{24}$/)) {
@@ -76,6 +81,7 @@ module.exports.update = async (req, res) => {
       return sendJSONResponse(res, 404, null, req.method, 'Category not Found!');
     }
     if (name) {
+      name = name.charAt(0).toUpperCase() + name.slice(1);
       category.name = name;
     }
 

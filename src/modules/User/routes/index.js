@@ -25,10 +25,10 @@ const parser = multer({storage: storage})
 
 const router = express.Router();
 
-router.post('/register', expressValidator(validateUser.register), catchErrors(ctrlUser.register));
-router.put('/edit/:userId', checkTokenExists, verifyToken, expressValidator(validateUser.update), parser.single("image"), catchErrors(ctrlUser.update));
+router.post('/register', parser.none(), expressValidator(validateUser.register), catchErrors(ctrlUser.register));
+router.put('/edit/:userId', checkTokenExists, verifyToken,parser.single("image"), expressValidator(validateUser.update), catchErrors(ctrlUser.update));
 router.get('/profile/:id', catchErrors(ctrlUser.view_profile));
-router.post('/login', expressValidator(validateUser.login), catchErrors(ctrlUser.login));
+router.post('/login', parser.none(), expressValidator(validateUser.login), catchErrors(ctrlUser.login));
 router.get('/all', checkTokenExists, verifyToken, catchErrors(ctrlUser.allUsers));
 router.delete('/delete/:userId', checkTokenExists, checkAdmin, catchErrors(ctrlUser.deleteUser));
 router.get('/token', checkAdmin, (req, res) => res.status(200).json({

@@ -29,7 +29,7 @@ router.get('/', catchErrors(ctrlStory.viewStories));
 router.get('/:id', catchErrors(ctrlStory.viewSingleStory));
 router.get('/category/:catId', catchErrors(ctrlStory.viewStoriesByCategory));
 router.post('/create', checkTokenExists, verifyToken, parser.single("image"), catchErrors(ctrlStory.create));
-router.put('/edit/:storyId', checkTokenExists, verifyToken, expressValidator(validateStory.update), parser.single("image"), catchErrors(ctrlStory.update));
+router.put('/edit/:storyId', checkTokenExists, verifyToken, parser.single("image"), expressValidator(validateStory.update), catchErrors(ctrlStory.update));
 router.get('/like/:storyId', catchErrors(ctrlStory.likeStory));
 router.get('/dislike/:storyId', catchErrors(ctrlStory.disLikeStory));
 router.delete('/delete/:storyId', checkTokenExists, verifyToken, expressValidator(validateStory.delete), catchErrors(ctrlStory.deleteStory));
