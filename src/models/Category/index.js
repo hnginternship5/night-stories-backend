@@ -20,7 +20,8 @@ const categorySchema = new mongoose.Schema({
     default: Date.now,
   },
   image: {
-    type: String
+    type: String,
+    default: 'https://res.cloudinary.com/ephaig/image/upload/v1555067803/top-best-storybook-apps-for-kids-i-love-you-all-the-time-3.jpg',
   },
   imageId: {
     type: String
