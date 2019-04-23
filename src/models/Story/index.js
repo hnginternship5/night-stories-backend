@@ -36,15 +36,17 @@ const storySchema = new Schema({
   },
   views: Number,
   status: String,
+  likes: {type:Number},
+  dislikes: {type:Number},
   // @raji Woked here
-  likes: [
-    {
-      user: {
-        type: Schema.Types.ObjectId,
-        ref: 'User',
-      },
-    },
-  ],
+  // likes: [
+  //   {
+  //     user: {
+  //       type: Schema.Types.ObjectId,
+  //       ref: 'User',
+  //     },
+  //   },
+  // ],
   // Work ends here
 
   comments: [

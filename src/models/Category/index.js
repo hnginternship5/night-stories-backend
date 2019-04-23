@@ -5,8 +5,7 @@ const Schema = mongoose.Schema;
 const categorySchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true,
-    lowercase: true,
+    required: true
   },
 
   stories: [
@@ -20,6 +19,12 @@ const categorySchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  image: {
+    type: String
+  },
+  imageId: {
+    type: String
+  }
 });
 
 const Category = mongoose.model('Category', categorySchema);

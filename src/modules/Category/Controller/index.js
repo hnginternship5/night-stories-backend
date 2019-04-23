@@ -12,11 +12,16 @@ const Story = mongoose.model('Story');
    */
 module.exports.create = async (req, res) => {
   let { name } = req.body;
-  name = name.toLowerCase();
+  // if (!name) {
+  //   return sendJSONResponse(res, 404, null, req.method, 'Category name is missing');
+  // }
+  name = name.charAt(0).toUpperCase() + name.slice(1);
   // Check if category exists
   const findCat = await Category.findOne({ name });
 
-  // If exists
+  console.log(req.body)
+
+  // If exists 
   if (findCat) {
     return sendJSONResponse(
       res,
@@ -29,6 +34,21 @@ module.exports.create = async (req, res) => {
   const category = new Category();
 
   category.name = name;
+  if (req.file) {
+
+    try {
+      const image = {};
+      image.url = req.file.url;
+      image.id = req.file.public_id;
+
+      category.imageId = image.id;
+      category.image = image.url;
+    } catch (error) {
+      return sendJSONResponse(res, 408, null, req.method, 'Bad Network');
+    }
+  }else{
+    category.image = 'https://res.cloudinary.com/ephaig/image/upload/v1555067803/top-best-storybook-apps-for-kids-i-love-you-all-the-time-3.jpg';
+  }
   category.save();
   sendJSONResponse(
     res,
@@ -48,7 +68,7 @@ module.exports.create = async (req, res) => {
    * @return {json} res.json
    */
 module.exports.update = async (req, res) => {
-  const { name } = req.body;
+  let { name } = req.body;
   const { catId } = req.params;
 
   if (!catId.match(/^[0-9a-fA-F]{24}$/)) {
@@ -61,7 +81,22 @@ module.exports.update = async (req, res) => {
       return sendJSONResponse(res, 404, null, req.method, 'Category not Found!');
     }
     if (name) {
+      name = name.charAt(0).toUpperCase() + name.slice(1);
       category.name = name;
+    }
+
+    if (req.file) {
+
+      try {
+        const image = {};
+        image.url = req.file.url;
+        image.id = req.file.public_id;
+  
+        category.imageId = image.id;
+        category.image = image.url;
+      } catch (error) {
+        return sendJSONResponse(res, 408, null, req.method, 'Bad Network');
+      }
     }
 
     category.save();
@@ -84,7 +119,7 @@ module.exports.update = async (req, res) => {
    * @return {json} res.json
    */
 module.exports.getAll = async (req, res) => {
-  const category = await Category.find({}, 'name');
+  const category = await Category.find({}, 'name image');
 
   if (category) {
     return sendJSONResponse(
@@ -142,6 +177,7 @@ module.exports.getSingleCategory = async (req, res) => {
 module.exports.delete = async (req, res) => {
   const { catId } = req.params;
 
+  console.log(true);
   if (!catId.match(/^[0-9a-fA-F]{24}$/)) {
     return sendJSONResponse(res, 400, null, req.method, 'Invalid Category ID');
   }
@@ -173,7 +209,7 @@ module.exports.delete = async (req, res) => {
 
   await Category.deleteOne({ _id: catId });
 
-  const category = await Category.find({}, 'name');
+  const category = await Category.find({}, 'name image');
   sendJSONResponse(
     res,
     200,

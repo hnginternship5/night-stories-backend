@@ -1,7 +1,7 @@
 const joi = require('joi');
 
 module.exports.create = {
-  body: {
+  file: {
     name: joi.string().required(),
   },
 };
@@ -9,7 +9,7 @@ module.exports.create = {
 
 module.exports.update = {
   body: {
-    name: joi.string().required(),
+    name: joi.string(),
   },
 };
 
