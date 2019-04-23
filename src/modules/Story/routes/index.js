@@ -34,5 +34,6 @@ router.get('/like/:storyId', catchErrors(ctrlStory.likeStory));
 router.get('/dislike/:storyId', catchErrors(ctrlStory.disLikeStory));
 router.delete('/delete/:storyId', checkTokenExists, verifyToken, expressValidator(validateStory.delete), catchErrors(ctrlStory.deleteStory));
 router.post('/:storyId/comment', checkTokenExists, verifyToken, catchErrors(ctrlStory.createComment));
+router.delete('/:storyId/:commentId/delete', checkTokenExists, verifyToken, expressValidator(validateStory.delete), catchErrors(ctrlStory.deleteComment));
 
 module.exports = router;

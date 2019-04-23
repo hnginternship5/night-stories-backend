@@ -358,3 +358,37 @@ module.exports.createComment = async (req, res) => {
   return sendJSONResponse(res, 201, {}, req.method, 'Comment created successfully');
 
 };
+
+module.exports.deleteComment = async (req, res) => {
+  const { storyId, commentId } = req.params;
+  const user = decodeToken(req, res); 
+  const findStory = Story.findOne({ _id: storyId });
+
+
+  if (!findStory) {
+    return sendJSONResponse(res, 400, {}, req.method, 'Story does not exist');
+  }
+  const findComment = await Story.findOne({ 'comments._id': commentId });
+  
+  if (!findComment) {
+    return sendJSONResponse(res, 400, {}, req.method, 'Comment does not exist');
+  }
+  
+  const userId = findComment.comments[0].user;
+  // console.log(`'${userId}'`, `'${user._id}'`,user.admin);
+  
+  
+
+  if ( `'${userId}'` === `'${user._id}'` || user.admin === true ) {
+   await Story.update(
+      { 'comments._id': commentId },
+      { $pull: { comments: { user: userId } } },
+    );
+    return sendJSONResponse(res, 204, {}, req.method, 'Comment deleted');
+  }
+
+  if (findComment.user !== user._id) {
+    return sendJSONResponse(res, 400, {}, req.method, 'You are not allowed to delete this comment');
+  }
+
+};
